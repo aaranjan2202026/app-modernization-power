@@ -17,17 +17,17 @@ namespace PharmacyNetwork.Web.Controllers
     [Authorize]
     public class FirmsController : Controller
     {
-        private readonly IAsyncRepository<Firm> _repository;
+        private readonly IFirmService _firmService;
 
-        public FirmsController(IAsyncRepository<Firm> repository)
+        public FirmsController(IFirmService firmService)
         {
-            _repository = repository;
+            _firmService = firmService;
         }
 
         // GET: Firms
         public async Task<IActionResult> Index()
         {
-            var firms = await _repository.GetAllAsync();
+            var firms = await _firmService.GetAllFirmsAsync();
             return View(firms);
         }
 
@@ -36,7 +36,7 @@ namespace PharmacyNetwork.Web.Controllers
         {
             if (id == null) return NotFound();
 
-            var firm = await _repository.GetByIdAsync(id);
+            var firm = await _firmService.GetFirmByIdAsync(id);
             if (firm == null)
             {
                 return NotFound();
@@ -58,7 +58,7 @@ namespace PharmacyNetwork.Web.Controllers
                 return View(firm);
             }
 
-            await _repository.AddAsync(firm);
+            await _firmService.CreateFirmAsync(firm);
             return RedirectToAction(nameof(Index));
         }
 
@@ -68,7 +68,7 @@ namespace PharmacyNetwork.Web.Controllers
         {
             if (id == null) return NotFound();
 
-            var firm = await _repository.GetByIdAsync(id);
+            var firm = await _firmService.GetFirmByIdAsync(id);
             if (firm == null)
             {
                 return NotFound();
@@ -87,11 +87,11 @@ namespace PharmacyNetwork.Web.Controllers
             {
                 try
                 {
-                    await _repository.UpdateAsync(firm);
+                    await _firmService.UpdateFirmAsync(firm);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await FirmExistsAsync(firm.FirmId))
+                    if (!await _firmService.FirmExistsAsync(firm.FirmId))
                     {
                         return NotFound();
                     }
@@ -114,7 +114,7 @@ namespace PharmacyNetwork.Web.Controllers
                 return NotFound();
             }
 
-            var firm = await _repository.GetByIdAsync(id);
+            var firm = await _firmService.GetFirmByIdAsync(id);
             if (firm == null)
             {
                 return NotFound();
@@ -129,15 +129,8 @@ namespace PharmacyNetwork.Web.Controllers
         [Authorize(Roles = AuthorizationConstants.Roles.ADMINSTRATORS)]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var firm = await _repository.GetByIdAsync(id);
-            await _repository.DeleteAsync(firm);
+            await _firmService.DeleteFirmAsync(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        private async Task<bool> FirmExistsAsync(int id)
-        {
-            var firms = await _repository.GetAllAsync();
-            return firms.Any(f => f.FirmId == id);
         }
     }
 }
