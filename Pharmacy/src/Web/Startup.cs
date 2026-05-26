@@ -47,6 +47,7 @@ namespace PharmacyNetwork.Web
 
             // Register business logic services
             services.AddScoped<IFirmService, FirmService>();
+            services.AddScoped<IMedicalItemService, MedicalItemService>();
 
             // Add Identity DbContext using IOptions pattern
             services.AddDbContext<AppIdentityDbContext>((serviceProvider, options) =>
