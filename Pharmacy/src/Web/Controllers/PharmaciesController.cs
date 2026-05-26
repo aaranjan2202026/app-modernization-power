@@ -93,7 +93,7 @@ namespace PharmacyNetwork.Web.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PharmacyExists(pharmacy.PharmId))
+                    if (!await PharmacyExistsAsync(pharmacy.PharmId))
                     {
                         return NotFound();
                     }
@@ -145,10 +145,10 @@ namespace PharmacyNetwork.Web.Controllers
             }
         }
 
-        private bool PharmacyExists(int id)
+        private async Task<bool> PharmacyExistsAsync(int id)
         {
-            var list = _repository.GetAllAsync().Result;
-            return list.Any(e => e.PharmId == id);
+            var pharmacies = await _repository.GetAllAsync();
+            return pharmacies.Any(e => e.PharmId == id);
         }
 
         public async Task<IActionResult> Transfer(int medItemId, int pharmId)
