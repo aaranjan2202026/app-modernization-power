@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using PharmacyNetwork.ApplicationCore.Configuration;
 using PharmacyNetwork.ApplicationCore.Interfaces;
 using PharmacyNetwork.Infrastructure.Data;
 using  PharmacyNetwork.Infrastructure.Identity;
@@ -35,6 +36,9 @@ namespace PharmacyNetwork.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Configure strongly-typed settings objects
+            services.Configure<DatabaseSettings>(Configuration.GetSection("Database"));
+
             CreateIdentityIfNotCreated(services);
 
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
