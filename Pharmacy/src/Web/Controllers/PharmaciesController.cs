@@ -19,19 +19,19 @@ namespace PharmacyNetwork.Web.Controllers
     [Authorize]
     public class PharmaciesController : Controller
     {
-        private readonly IAsyncRepository<Pharmacy> _repository;
+        private readonly IPharmacyService _pharmacyService;
         private readonly IMediator _mediator;
 
-        public PharmaciesController(IAsyncRepository<Pharmacy> repository, IMediator mediator)
+        public PharmaciesController(IPharmacyService pharmacyService, IMediator mediator)
         {
-            _repository = repository;
+            _pharmacyService = pharmacyService;
             _mediator = mediator;
         }
 
         // GET: Pharmacies
         public async Task<IActionResult> Index()
         {
-            var pharmacy = await _repository.GetAllAsync();
+            var pharmacy = await _pharmacyService.GetAllPharmaciesAsync();
             return View(pharmacy);
         }
 
@@ -40,7 +40,7 @@ namespace PharmacyNetwork.Web.Controllers
         {
             if (id == null) return NotFound();
 
-            var pharmacy = await _repository.GetByIdAsync(id);
+            var pharmacy = await _pharmacyService.GetPharmacyByIdAsync(id);
             if (pharmacy == null) return NotFound();
 
             var viewModel = new PharmacyViewModel()
@@ -64,7 +64,7 @@ namespace PharmacyNetwork.Web.Controllers
         {
             if (!ModelState.IsValid) return View(pharmacy);
 
-            await _repository.AddAsync(pharmacy);
+            await _pharmacyService.CreatePharmacyAsync(pharmacy);
             return RedirectToAction(nameof(Index));
         }
 
@@ -74,7 +74,7 @@ namespace PharmacyNetwork.Web.Controllers
         {
             if (id == null) return NotFound();
 
-            var pharmacy = await _repository.GetByIdAsync(id);
+            var pharmacy = await _pharmacyService.GetPharmacyByIdAsync(id);
             if (pharmacy == null) return NotFound();
             return View(pharmacy);
         }
@@ -89,11 +89,11 @@ namespace PharmacyNetwork.Web.Controllers
             {
                 try
                 {
-                    await _repository.UpdateAsync(pharmacy);
+                    await _pharmacyService.UpdatePharmacyAsync(pharmacy);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await PharmacyExistsAsync(pharmacy.PharmId))
+                    if (!await _pharmacyService.PharmacyExistsAsync(pharmacy.PharmId))
                     {
                         return NotFound();
                     }
@@ -113,7 +113,7 @@ namespace PharmacyNetwork.Web.Controllers
         {
             if (id == null) return NotFound();
 
-            var pharmacy = await _repository.GetByIdAsync(id);
+            var pharmacy = await _pharmacyService.GetPharmacyByIdAsync(id);
             if (pharmacy == null) return NotFound();
 
             return View(pharmacy);
@@ -125,30 +125,23 @@ namespace PharmacyNetwork.Web.Controllers
         [Authorize(Roles = AuthorizationConstants.Roles.ADMINSTRATORS)]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var pharmacy = await _repository.GetByIdAsync(id);
-            if (pharmacy == null) return NotFound();
-
             try
             {
-                await _repository.DeleteAsync(pharmacy);
+                await _pharmacyService.DeletePharmacyAsync(id);
                 return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateException)
             {
+                var pharmacy = await _pharmacyService.GetPharmacyByIdAsync(id);
                 ViewData["DeleteError"] = "This pharmacy has related records and cannot be deleted.";
                 return View("Delete", pharmacy);
             }
             catch (Exception)
             {
+                var pharmacy = await _pharmacyService.GetPharmacyByIdAsync(id);
                 ViewData["DeleteError"] = "This pharmacy has related records and cannot be deleted.";
                 return View("Delete", pharmacy);
             }
-        }
-
-        private async Task<bool> PharmacyExistsAsync(int id)
-        {
-            var pharmacies = await _repository.GetAllAsync();
-            return pharmacies.Any(e => e.PharmId == id);
         }
 
         public async Task<IActionResult> Transfer(int medItemId, int pharmId)
