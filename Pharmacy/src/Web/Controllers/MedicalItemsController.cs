@@ -102,7 +102,7 @@ namespace PharmacyNetwork.Web.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!MedicalItemExists(medicalItemViewModel.MedicalItem.MedItemId))
+                    if (!await MedicalItemExistsAsync(medicalItemViewModel.MedicalItem.MedItemId))
                     {
                         return NotFound();
                     }
@@ -140,10 +140,10 @@ namespace PharmacyNetwork.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool MedicalItemExists(int id)
+        private async Task<bool> MedicalItemExistsAsync(int id)
         {
-            var list = _repository.GetAllAsync().Result;
-            return list.Any(m => m.MedItemId == id);
+            var medicalItems = await _repository.GetAllAsync();
+            return medicalItems.Any(m => m.MedItemId == id);
         }
     }
 }
