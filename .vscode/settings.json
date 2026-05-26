@@ -1,0 +1,13 @@
+﻿{
+  "github.copilot.chat.mcp.enabled": true,
+  "github.copilot.chat.mcp.servers": {
+    "sonarqube": {
+      "command": "node",
+      "args": ["C:\\Users\\umabhart\\Documents\\Demo_plaatform\\cca-app-demo\\cca-app-mod-demo-dotnet-refactor-custom-agents\\mcp-server-sonarqube\\index.js"],
+      "env": {
+        "SONARQUBE_URL": "https://sonarqube-hub.azurewebsites.net",
+        "SONARQUBE_TOKEN": "squ_ba853640391b0b274d3f8428e63da13bcb7f5a56"
+      }
+    }
+  }
+}

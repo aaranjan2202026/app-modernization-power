@@ -1,0 +1,20 @@
+﻿{
+  "name": "mcp-server-sonarqube",
+  "version": "1.0.0",
+  "description": "Model Context Protocol server for SonarQube integration",
+  "main": "index.js",
+  "bin": {
+    "mcp-server-sonarqube": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": ["mcp", "sonarqube", "model-context-protocol"],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "axios": "^1.16.1"
+  }
+}

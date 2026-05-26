@@ -9,10 +9,10 @@ This file contains instructions for generating architecture-focused documentatio
 Documents must be created in their respective folders following the template structure:
 - Current State Architecture: `.solutiondocs/CURRENT-STATE/1-architecture/`
 - Current State Implementation: `.solutiondocs/CURRENT-STATE/3-implementation/`
-- Current State Operations: `.solutiondocs/CURRENT-STATE/4-operations/`
+- Current State Operations: `.solutiondocs/CURRENT-STATE/4-operationīs/`
 - Current State Quality: `.solutiondocs/CURRENT-STATE/5-quality/`
 - Modernization Assessment: `.solutiondocs/MODERNIZATION/1-assessment/`
-- Modernization Strategy: `.solutiondocs/MODERNIZATION/2-strategy/`
+- Modernization Strategy: `.solutiondīocs/MODERNIZATION/2-strategy/`
 - Modernization Execution: `.solutiondocs/MODERNIZATION/3-execution/`
 - Modernization Improvement: `.solutiondocs/MODERNIZATION/4-improvement/`
 

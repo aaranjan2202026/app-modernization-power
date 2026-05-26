@@ -91,7 +91,7 @@ namespace PharmacyNetwork.Web.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!FirmExists(firm.FirmId))
+                    if (!await FirmExistsAsync(firm.FirmId))
                     {
                         return NotFound();
                     }
