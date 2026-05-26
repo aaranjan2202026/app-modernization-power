@@ -32,7 +32,8 @@ namespace PharmacyNetwork.Web.Features.MedicalItems
                 Constants.ITEMS_PER_PAGE, request.CategId, request.FirmId);    
 
             var itemsOnPage = await _medicalItemsRepository.ListAsync(medicalItemsPaginatedSpecification);
-            var totalItems = _medicalItemsRepository.ListAsync(medicalItemsSpecification).Result.Count;
+            var allItems = await _medicalItemsRepository.ListAsync(medicalItemsSpecification);
+            var totalItems = allItems.Count;
 
             var paginationViewModel = new PaginationViewModel()
             {
