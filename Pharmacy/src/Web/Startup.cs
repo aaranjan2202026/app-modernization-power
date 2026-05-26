@@ -44,14 +44,18 @@ namespace PharmacyNetwork.Web
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
             services.AddScoped(typeof(IAppLogger<>), typeof(LoggerAdapter<>));
 
-            // Add Identity DbContext
-            services.AddDbContext<AppIdentityDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("IdentityConnection")));
+            // Add Identity DbContext using IOptions pattern
+            services.AddDbContext<AppIdentityDbContext>((serviceProvider, options) =>
+            {
+                var dbSettings = serviceProvider.GetRequiredService<Microsoft.Extensions.Options.IOptions<DatabaseSettings>>().Value;
+                options.UseSqlServer(dbSettings.IdentityConnection);
+            });
             
-            //Add PharmacyNetwork DbContext
-            services.AddDbContext<PharmacyNetworkContext>(options =>
+            //Add PharmacyNetwork DbContext using IOptions pattern
+            services.AddDbContext<PharmacyNetworkContext>((serviceProvider, options) =>
                 {
-                    options.UseSqlServer(Configuration.GetConnectionString("PharmacyNetworkConnection"),
+                    var dbSettings = serviceProvider.GetRequiredService<Microsoft.Extensions.Options.IOptions<DatabaseSettings>>().Value;
+                    options.UseSqlServer(dbSettings.PharmacyNetworkConnection,
                     sqlServerOptionsAction: sqlOption =>
                     {
                         sqlOption.EnableRetryOnFailure(
