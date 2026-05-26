@@ -72,7 +72,7 @@ namespace PharmacyNetwork.Web.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductCategoryExists(productCategory.CategId))
+                    if (!await ProductCategoryExistsAsync(productCategory.CategId))
                     {
                         return NotFound();
                     }
@@ -109,10 +109,10 @@ namespace PharmacyNetwork.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProductCategoryExists(int id)
+        private async Task<bool> ProductCategoryExistsAsync(int id)
         {
-            var list = _repository.GetAllAsync().Result;
-            return list.Any(e => e.CategId == id);
+            var categories = await _repository.GetAllAsync();
+            return categories.Any(e => e.CategId == id);
         }
     }
 }
