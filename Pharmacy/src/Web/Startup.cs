@@ -14,6 +14,7 @@ using PharmacyNetwork.ApplicationCore.Interfaces;
 using PharmacyNetwork.Infrastructure.Data;
 using  PharmacyNetwork.Infrastructure.Identity;
 using PharmacyNetwork.Infrastructure.Logging;
+using PharmacyNetwork.Infrastructure.Services;
 
 namespace PharmacyNetwork.Web
 {
@@ -43,6 +44,9 @@ namespace PharmacyNetwork.Web
 
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
             services.AddScoped(typeof(IAppLogger<>), typeof(LoggerAdapter<>));
+
+            // Register business logic services
+            services.AddScoped<IFirmService, FirmService>();
 
             // Add Identity DbContext using IOptions pattern
             services.AddDbContext<AppIdentityDbContext>((serviceProvider, options) =>
