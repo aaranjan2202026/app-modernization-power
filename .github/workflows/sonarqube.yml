@@ -1,0 +1,33 @@
+name: AppModernization/sonarqube_custom_agent
+
+on:
+  workflow_dispatch:
+    inputs:
+      buildConfiguration:
+        default: Release
+        type: string
+        required: false
+
+env:
+  sonarQubeUrl: https://sonarqube-hub.azurewebsites.net
+
+jobs:
+  SonarQube-Scan:
+    name: SonarQube Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v2
+        with:
+          projectBaseDir: .
+          args: >
+            -Dsonar.projectKey=Refactoring-legacy-Pharmacy-uc2
+            -Dsonar.projectName=Refactoring-legacy-Pharmacy-uc2
+            -Dsonar.host.url=${{ env.sonarQubeUrl }}
+            -Dsonar.login=${{ secrets.sonarQubeToken }}
+            -Dsonar.exclusions=documentation/*,.vscode/*
+            -Dsonar.newCode.referenceBranch=main

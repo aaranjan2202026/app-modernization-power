@@ -70,6 +70,7 @@ RESULT:
    - Coverage Validation — not-started
    - Acceptance Criteria Check — not-started
    - Sign-off Report Generation — not-started
+   - Trigger Final SonarQube Scan — not-started
 
 2. Verify you are on the correct branch:
    ```
@@ -301,6 +302,35 @@ ALL 7 CHECKS PASS?
 
 ---
 
+### Step 9: Trigger Final SonarQube Scan (Phase 6)
+
+**After G4 APPROVED**, trigger the SonarQube workflow to generate the final quality report:
+
+```bash
+gh workflow run sonarqube.yml --ref feature/dotnet-modernization
+```
+
+**Purpose:**
+- Generate post-refactoring SonarQube report
+- Compare with baseline report from Phase 0
+- Show metrics improvement:
+  - Errors resolved (before vs after)
+  - Remaining errors
+  - Code coverage improvement
+  - Technical debt reduction
+
+**Note:** User will manually check the workflow run at:
+`https://github.com/Application-Modernization/cca-app-mod-demo-dotnet-refactor-custom-agents/actions/workflows/sonarqube.yml`
+
+**Output message:**
+```
+✅ Final SonarQube scan triggered successfully!
+📊 View results at: https://github.com/Application-Modernization/cca-app-mod-demo-dotnet-refactor-custom-agents/actions/workflows/sonarqube.yml
+🎯 This will show before/after comparison with Phase 0 baseline scan
+```
+
+---
+
 ## Rollback Guidance (If G4 Blocked)
 
 If validation cannot pass after auto-fix attempts:
@@ -335,4 +365,5 @@ Validation is complete when:
 - ✅ All plan tasks completed
 - ✅ `Validation/VALIDATION-REPORT.md` generated
 - ✅ Gate G4 = APPROVED
+- ✅ Final SonarQube scan triggered (Phase 6)
 - ✅ Handoff sent to orchestrator for Phase 5

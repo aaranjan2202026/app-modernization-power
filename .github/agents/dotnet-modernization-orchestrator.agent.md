@@ -132,7 +132,7 @@ Call `manage_todo_list` with all phases:
 5. Phase 4: Validation (dotnet-modernization-validator) — not-started
 6. Phase 5: Deployment (Azure DevOps) — not-started
 
-### Step 0.5: Create git branch
+### Step 0.5: Checkout Working Branch
 
 ```powershell
 git checkout -b feature/dotnet-modernization
@@ -141,6 +141,36 @@ git checkout -b feature/dotnet-modernization
 If branch already exists:
 ```powershell
 git checkout feature/dotnet-modernization
+```
+
+### Step 0.6: Commit and Push Initial Setup
+
+Before starting the workflow, commit any pending changes and push to remote:
+
+```powershell
+# Stage all changes (agent configs, workflows, etc.)
+git add .
+
+# Check if there are changes to commit
+git status
+
+# If changes exist, commit them
+git commit -m "Initialize .NET modernization workflow - Phase 0"
+
+# Push to remote (creates remote branch if needed)
+git push -u origin feature/dotnet-modernization
+```
+
+**Purpose:**
+- Ensures all agent configurations are committed and backed up
+- Creates the remote branch for collaboration and tracking
+- Provides clean starting point before agents make changes
+
+**Output message:**
+```
+✅ Working branch: feature/dotnet-modernization
+✅ Agent configurations committed and pushed to remote
+🚀 Ready to start Phase 1 (Assessment)
 ```
 
 ---
