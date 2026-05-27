@@ -16,17 +16,17 @@ namespace PharmacyNetwork.Web.Controllers
     [Authorize]
     public class ProductCategoriesController : Controller
     {
-        private readonly IProductCategoryService _productCategoryService;
+        private readonly IAsyncRepository<ProductCategory> _repository;
 
-        public ProductCategoriesController(IProductCategoryService productCategoryService)
+        public ProductCategoriesController(IAsyncRepository<ProductCategory> repository)
         {
-            _productCategoryService = productCategoryService;
+            _repository = repository;
         }
 
         // GET: ProductCategories
         public async Task<IActionResult> Index()
         {
-            var productCategories= await _productCategoryService.GetAllProductCategoriesAsync();
+            var productCategories= await _repository.GetAllAsync();
             return View(productCategories);
         }
 
@@ -42,7 +42,7 @@ namespace PharmacyNetwork.Web.Controllers
         {
             if (!ModelState.IsValid) return View(productCategory);
 
-            await _productCategoryService.CreateProductCategoryAsync(productCategory);
+            await _repository.AddAsync(productCategory);
             return RedirectToAction(nameof(Index));
         }
 
@@ -52,7 +52,7 @@ namespace PharmacyNetwork.Web.Controllers
         {
             if (id == null) return NotFound();
 
-            var productCategory = await _productCategoryService.GetProductCategoryByIdAsync(id);
+            var productCategory = await _repository.GetByIdAsync(id);
             if (productCategory == null) return NotFound();
             
             return View(productCategory);
@@ -68,11 +68,11 @@ namespace PharmacyNetwork.Web.Controllers
             {
                 try
                 {
-                    await _productCategoryService.UpdateProductCategoryAsync(productCategory);
+                    await _repository.UpdateAsync(productCategory);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await _productCategoryService.ProductCategoryExistsAsync(productCategory.CategId))
+                    if (!ProductCategoryExists(productCategory.CategId))
                     {
                         return NotFound();
                     }
@@ -92,7 +92,7 @@ namespace PharmacyNetwork.Web.Controllers
         {
             if (id == null) return NotFound();
 
-            var productCategory = await _productCategoryService.GetProductCategoryByIdAsync(id);
+            var productCategory = await _repository.GetByIdAsync(id);
             if (productCategory == null) return NotFound();
 
             return View(productCategory);
@@ -104,8 +104,15 @@ namespace PharmacyNetwork.Web.Controllers
         [Authorize(Roles = AuthorizationConstants.Roles.ADMINSTRATORS)]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _productCategoryService.DeleteProductCategoryAsync(id);
+            var productCategory = await _repository.GetByIdAsync(id);
+            await _repository.DeleteAsync(productCategory);
             return RedirectToAction(nameof(Index));
+        }
+
+        private bool ProductCategoryExists(int id)
+        {
+            var list = _repository.GetAllAsync().Result;
+            return list.Any(e => e.CategId == id);
         }
     }
 }

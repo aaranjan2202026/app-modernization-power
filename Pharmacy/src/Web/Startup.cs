@@ -9,12 +9,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using PharmacyNetwork.ApplicationCore.Configuration;
 using PharmacyNetwork.ApplicationCore.Interfaces;
 using PharmacyNetwork.Infrastructure.Data;
 using  PharmacyNetwork.Infrastructure.Identity;
 using PharmacyNetwork.Infrastructure.Logging;
-using PharmacyNetwork.Infrastructure.Services;
 
 namespace PharmacyNetwork.Web
 {
@@ -37,32 +35,19 @@ namespace PharmacyNetwork.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Configure strongly-typed settings objects
-            services.Configure<DatabaseSettings>(Configuration.GetSection("Database"));
-
             CreateIdentityIfNotCreated(services);
 
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
             services.AddScoped(typeof(IAppLogger<>), typeof(LoggerAdapter<>));
 
-            // Register business logic services
-            services.AddScoped<IFirmService, FirmService>();
-            services.AddScoped<IMedicalItemService, MedicalItemService>();
-            services.AddScoped<IPharmacyService, PharmacyService>();
-            services.AddScoped<IProductCategoryService, ProductCategoryService>();
-
-            // Add Identity DbContext using IOptions pattern
-            services.AddDbContext<AppIdentityDbContext>((serviceProvider, options) =>
-            {
-                var dbSettings = serviceProvider.GetRequiredService<Microsoft.Extensions.Options.IOptions<DatabaseSettings>>().Value;
-                options.UseSqlServer(dbSettings.IdentityConnection);
-            });
+            // Add Identity DbContext
+            services.AddDbContext<AppIdentityDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("IdentityConnection")));
             
-            //Add PharmacyNetwork DbContext using IOptions pattern
-            services.AddDbContext<PharmacyNetworkContext>((serviceProvider, options) =>
+            //Add PharmacyNetwork DbContext
+            services.AddDbContext<PharmacyNetworkContext>(options =>
                 {
-                    var dbSettings = serviceProvider.GetRequiredService<Microsoft.Extensions.Options.IOptions<DatabaseSettings>>().Value;
-                    options.UseSqlServer(dbSettings.PharmacyNetworkConnection,
+                    options.UseSqlServer(Configuration.GetConnectionString("PharmacyNetworkConnection"),
                     sqlServerOptionsAction: sqlOption =>
                     {
                         sqlOption.EnableRetryOnFailure(

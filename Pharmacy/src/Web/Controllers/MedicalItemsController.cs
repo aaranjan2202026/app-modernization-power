@@ -21,12 +21,12 @@ namespace PharmacyNetwork.Web.Controllers
     [Authorize]
     public class MedicalItemsController : Controller
     {
-        private readonly IMedicalItemService _medicalItemService;
+        private readonly IAsyncRepository<MedicalItem> _repository;
         private readonly IMediator _mediator;
 
-        public MedicalItemsController(IMedicalItemService medicalItemService, IMediator mediator)
+        public MedicalItemsController(IAsyncRepository<MedicalItem> repository, IMediator mediator)
         {
-            _medicalItemService = medicalItemService;
+            _repository = repository;
             _mediator = mediator;
         }
 
@@ -44,7 +44,7 @@ namespace PharmacyNetwork.Web.Controllers
         {
             if (id == null) return NotFound();
 
-            var medicalItem = await _medicalItemService.GetMedicalItemByIdAsync(id);
+            var medicalItem = await _repository.GetByIdAsync(id);
             if (medicalItem == null) return NotFound();
 
             var viewModel = new MedicalItemsDetailViewModel()
@@ -72,7 +72,7 @@ namespace PharmacyNetwork.Web.Controllers
         {
             if (!ModelState.IsValid) return View(medicalItemViewModel);
 
-            await _medicalItemService.CreateMedicalItemAsync(medicalItemViewModel.MedicalItem);
+            await _repository.AddAsync(medicalItemViewModel.MedicalItem);
             return RedirectToAction(nameof(Index));
         }
 
@@ -98,11 +98,11 @@ namespace PharmacyNetwork.Web.Controllers
             {
                 try
                 {
-                    await _medicalItemService.UpdateMedicalItemAsync(medicalItemViewModel.MedicalItem);
+                    await _repository.UpdateAsync(medicalItemViewModel.MedicalItem);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await _medicalItemService.MedicalItemExistsAsync(medicalItemViewModel.MedicalItem.MedItemId))
+                    if (!MedicalItemExists(medicalItemViewModel.MedicalItem.MedItemId))
                     {
                         return NotFound();
                     }
@@ -121,7 +121,7 @@ namespace PharmacyNetwork.Web.Controllers
         {
             if (id == null) return NotFound();
 
-            var medicalItem = await _medicalItemService.GetMedicalItemByIdAsync(id);
+            var medicalItem = await _repository.GetByIdAsync(id);
             if (medicalItem == null) return NotFound();
 
             return View(medicalItem);
@@ -134,8 +134,16 @@ namespace PharmacyNetwork.Web.Controllers
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
             if (id == null) return NotFound();
-            await _medicalItemService.DeleteMedicalItemAsync(id.Value);
+            var medicalItem = await _repository.GetByIdAsync(id);
+            if (medicalItem == null) return NotFound();
+            await _repository.DeleteAsync(medicalItem);
             return RedirectToAction(nameof(Index));
+        }
+
+        private bool MedicalItemExists(int id)
+        {
+            var list = _repository.GetAllAsync().Result;
+            return list.Any(m => m.MedItemId == id);
         }
     }
 }
