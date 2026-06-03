@@ -17,6 +17,10 @@ import com.org.entity.User;
 @Controller
 public class AdminController {
 
+    private static final String ERROR_MSG_ATTR = "errorMsg";
+    private static final String SUCCESS_MSG_ATTR = "sucMsg";
+    private static final String ADMIN_LOGIN_REDIRECT = "redirect:/admin_login.jsp";
+
     @PostMapping("/adminLogin")
     public String adminLogin(@RequestParam String email,
             @RequestParam String password,
@@ -27,16 +31,16 @@ public class AdminController {
             session.setAttribute("adminObj", new User());
             return "redirect:/admin/index.jsp";
         } else {
-            redirectAttributes.addFlashAttribute("errorMsg", "invalid user or password");
-            return "redirect:/admin_login.jsp";
+            redirectAttributes.addFlashAttribute(ERROR_MSG_ATTR, "invalid user or password");
+            return ADMIN_LOGIN_REDIRECT;
         }
     }
 
     @RequestMapping(value = "/adminLogout", method = { RequestMethod.GET, RequestMethod.POST })
     public String adminLogout(HttpSession session, RedirectAttributes redirectAttributes) {
         session.removeAttribute("adminObj");
-        redirectAttributes.addFlashAttribute("sucMsg", "Admin Logout Successfully");
-        return "redirect:/admin_login.jsp";
+        redirectAttributes.addFlashAttribute(SUCCESS_MSG_ATTR, "Admin Logout Successfully");
+        return ADMIN_LOGIN_REDIRECT;
     }
 
     @PostMapping("/addSpecialist")
@@ -48,9 +52,9 @@ public class AdminController {
         boolean res = dao.addSpecialist(specName);
 
         if (res) {
-            redirectAttributes.addFlashAttribute("sucMsg", "Specialist Added Successfully");
+            redirectAttributes.addFlashAttribute(SUCCESS_MSG_ATTR, "Specialist Added Successfully");
         } else {
-            redirectAttributes.addFlashAttribute("errorMsg", "Something Wrong on Server");
+            redirectAttributes.addFlashAttribute(ERROR_MSG_ATTR, "Something Wrong on Server");
         }
 
         return "redirect:/admin/index.jsp";
@@ -72,9 +76,9 @@ public class AdminController {
         boolean res = dao.registerDoctor(d);
 
         if (res) {
-            redirectAttributes.addFlashAttribute("sucMsg", "Doctor Added Successfully");
+            redirectAttributes.addFlashAttribute(SUCCESS_MSG_ATTR, "Doctor Added Successfully");
         } else {
-            redirectAttributes.addFlashAttribute("errorMsg", "Something Wrong on Server");
+            redirectAttributes.addFlashAttribute(ERROR_MSG_ATTR, "Something Wrong on Server");
         }
 
         return "redirect:/admin/doctor.jsp";
@@ -99,7 +103,7 @@ public class AdminController {
         if (res) {
             redirectAttributes.addFlashAttribute("succMsg", "Doctor Updated Successfully");
         } else {
-            redirectAttributes.addFlashAttribute("errorMsg", "Something Went Wrong");
+            redirectAttributes.addFlashAttribute(ERROR_MSG_ATTR, "Something Went Wrong");
         }
 
         return "redirect:/admin/view_doctor.jsp";
@@ -116,7 +120,7 @@ public class AdminController {
         if (res) {
             redirectAttributes.addFlashAttribute("succMsg", "Doctor Deleted Successfully");
         } else {
-            redirectAttributes.addFlashAttribute("errorMsg", "Something Went Wrong");
+            redirectAttributes.addFlashAttribute(ERROR_MSG_ATTR, "Something Went Wrong");
         }
 
         return "redirect:/admin/view_doctor.jsp";

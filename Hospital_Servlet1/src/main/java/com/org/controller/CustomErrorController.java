@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class CustomErrorController implements ErrorController {
 
+    private static final String ERROR_TITLE_ATTR = "errorTitle";
+    private static final String ERROR_MESSAGE_ATTR = "errorMessage";
+
     @RequestMapping("/error")
     public String handleError(HttpServletRequest request, Model model) {
         Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
@@ -22,20 +25,20 @@ public class CustomErrorController implements ErrorController {
 
             switch (statusCode) {
                 case 404:
-                    model.addAttribute("errorTitle", "Page Not Found");
-                    model.addAttribute("errorMessage", "The page you are looking for does not exist.");
+                    model.addAttribute(ERROR_TITLE_ATTR, "Page Not Found");
+                    model.addAttribute(ERROR_MESSAGE_ATTR, "The page you are looking for does not exist.");
                     break;
                 case 405:
-                    model.addAttribute("errorTitle", "Method Not Allowed");
-                    model.addAttribute("errorMessage", "The request method is not allowed for this resource.");
+                    model.addAttribute(ERROR_TITLE_ATTR, "Method Not Allowed");
+                    model.addAttribute(ERROR_MESSAGE_ATTR, "The request method is not allowed for this resource.");
                     break;
                 case 500:
-                    model.addAttribute("errorTitle", "Internal Server Error");
-                    model.addAttribute("errorMessage", "An internal server error occurred.");
+                    model.addAttribute(ERROR_TITLE_ATTR, "Internal Server Error");
+                    model.addAttribute(ERROR_MESSAGE_ATTR, "An internal server error occurred.");
                     break;
                 default:
-                    model.addAttribute("errorTitle", "Error " + statusCode);
-                    model.addAttribute("errorMessage", "An error occurred while processing your request.");
+                    model.addAttribute(ERROR_TITLE_ATTR, "Error " + statusCode);
+                    model.addAttribute(ERROR_MESSAGE_ATTR, "An error occurred while processing your request.");
                     break;
             }
         }
