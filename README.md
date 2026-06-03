@@ -1,20 +1,160 @@
-# Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+# Java Modernization Refactoring Demo
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+This project demonstrates automated Java application modernization using GitHub Copilot custom agents and SonarQube integration. The project transforms legacy Java 8 applications to modern Java 17+ with Spring Boot 3.x.
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+## Objectives
 
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
+- Modernize legacy Java 8 code to Java 17+ with async patterns (CompletableFuture/reactive streams)
+- Externalize configuration to Spring application.yml files
+- Modularize business logic into service layers
+- Replace deprecated Java APIs with modern equivalents
+- Integrate SonarQube for continuous code quality assessment
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+## Getting Started
+
+### Prerequisites
+
+1. **Java 17+ SDK** - Download from [Oracle](https://www.oracle.com/java/technologies/downloads/) or use OpenJDK
+2. **Maven 3.8+** or **Gradle 7.5+** - Build tools
+3. **VS Code** with GitHub Copilot extension
+4. **Git** for version control
+5. **SonarQube** access (optional for quality gates)
+
+### Installation Process
+
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd cca-app-mod-demo-java-refactor-custom-agents
+   ```
+
+2. Verify Java installation:
+   ```bash
+   java -version
+   # Should show Java 17 or higher
+   ```
+
+3. Build the project:
+   ```bash
+   # For Maven
+   mvn clean install
+
+   # For Gradle
+   gradle clean build
+   ```
+
+4. Run the application:
+   ```bash
+   # For Maven
+   mvn spring-boot:run
+
+   # For Gradle
+   gradle bootRun
+   ```
+
+## Automated Modernization Workflow
+
+This project uses custom GitHub Copilot agents to automate the modernization process:
+
+### Phase 0: Setup
+- Configure SonarQube project in `.github/copilot-instructions.md`
+- Trigger baseline scan
+
+### Phase 1: Assessment
+```bash
+@SonarQubeGenie Fix all SonarQube issues
+```
+
+### Phase 2: Planning
+```bash
+@java-modernization-plan Create modernization plan
+```
+
+### Phase 3: Refactoring
+```bash
+@java-modernization-developer Execute all modernization tasks
+```
+
+### Phase 4: Validation
+```bash
+@java-modernization-validator Run full validation
+```
+
+### Or run the full workflow:
+```bash
+@java-modernization-orchestrator Start the full Java modernization workflow
+```
+
+## Build and Test
+
+### Build
+```bash
+# Maven
+mvn clean package
+
+# Gradle
+gradle build
+```
+
+### Run Tests
+```bash
+# Maven
+mvn test
+
+# Gradle
+gradle test
+```
+
+### Check Coverage
+```bash
+# Maven with JaCoCo
+mvn jacoco:report
+
+# Gradle with JaCoCo
+gradle jacocoTestReport
+```
+
+## Project Structure
+
+```
+├── src/
+│   ├── main/
+│   │   ├── java/              # Java source files
+│   │   └── resources/
+│   │       ├── application.yml           # Main config
+│   │       ├── application-dev.yml       # Dev config
+│   │       └── application-prod.yml      # Prod config
+│   └── test/
+│       └── java/              # Unit and integration tests
+├── .github/
+│   ├── agents/                # Custom Copilot agents
+│   ├── instructions/          # Modernization instructions
+│   └── workflows/             # CI/CD pipelines
+├── Migration/                 # Migration plans and reports
+├── pom.xml                    # Maven build file
+└── README.md
+```
+
+## Contribute
+
+Contributions are welcome! To contribute:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Code Quality Standards
+
+- Minimum 80% test coverage
+- All SonarQube issues resolved
+- Follow Spring Boot and Java best practices
+- Use Java 17+ features appropriately
+
+## References
+
+- [Spring Boot 3.x Documentation](https://docs.spring.io/spring-boot/docs/current/reference/html/)
+- [Java 17 Documentation](https://docs.oracle.com/en/java/javase/17/)
+- [Spring Data JPA](https://spring.io/projects/spring-data-jpa)
+- [GitHub Copilot Documentation](https://docs.github.com/en/copilot)

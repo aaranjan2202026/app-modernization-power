@@ -4,7 +4,7 @@ tools: ['vscode', 'execute', 'read', 'search', 'web', 'sonarqubemcp/*', 'todo']
 model: Claude Sonnet 4.5 (copilot)
 handoffs:
   - label: Create Modernization Plan
-    agent: dotnet-modernization-plan
+    agent: java-modernization-plan
     prompt: Phase 2 - Planning. Using the assessment report and prioritized backlog from Phase 1, create a comprehensive modernization plan with task list, dependencies, and validation checks. Follow TECH-DESIGN-USE-CASE-2.md Phase 2 requirements.
     send: true
 ---
