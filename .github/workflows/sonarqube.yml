@@ -7,10 +7,16 @@ on:
         default: default
         type: string
         required: false
+      projectDir:
+        description: 'Project directory containing pom.xml'
+        default: 'Hospital_Servlet1'
+        type: string
+        required: false
 
 env:
   sonarQubeUrl: https://sonarqube-hub.azurewebsites.net
   JAVA_VERSION: '17'
+  PROJECT_DIR: ${{ inputs.projectDir || 'Hospital_Servlet1' }}
 
 jobs:
   SonarQube-Scan:
@@ -29,18 +35,19 @@ jobs:
           cache: 'maven'
 
       - name: Build with Maven
+        working-directory: ${{ env.PROJECT_DIR }}
         run: mvn clean verify -DskipTests
 
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@v2
         with:
-          projectBaseDir: .
+          projectBaseDir: ${{ env.PROJECT_DIR }}
           args: >
             -Dsonar.projectKey=Refactoring-legacy-Pharmacy-uc2
             -Dsonar.projectName=Refactoring-legacy-Pharmacy-uc2
             -Dsonar.host.url=${{ env.sonarQubeUrl }}
             -Dsonar.login=${{ secrets.sonarQubeToken }}
             -Dsonar.java.source=${{ env.JAVA_VERSION }}
-            -Dsonar.java.binaries=**/target/classes
+            -Dsonar.java.binaries=target/classes
             -Dsonar.exclusions=documentation/*,.vscode/*,**/target/**
             -Dsonar.newCode.referenceBranch=main
