@@ -60,7 +60,9 @@ Agent-Based Workflow Execution
 
 ## FULL AUTOMATED FLOW (Recommended)
  Run this command:
+ ```bash
   @java-modernization-orchestrator Start the full Java modernization workflow
+```
 
 
 
