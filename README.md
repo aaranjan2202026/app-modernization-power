@@ -22,38 +22,57 @@ This project demonstrates automated Java application modernization using GitHub 
 
 ### Installation Process
 
-1. Clone the repository:
+1. Clone Code from Main Branch:
    ```bash
    git clone <repository-url>
    cd cca-app-mod-demo-java-refactor-custom-agents
    ```
 
-2. Verify Java installation:
-   ```bash
-   java -version
-   # Should show Java 17 or higher
-   ```
+2. Push Code to Your Own Repository:
+    Required: Workflow only runs on your repo
+    git remote remove origin
+    ```bash
+    
+      git remote add origin <your-repo-url>
+      git branch -M main
+      git push -u origin main
+    ```
+3. Add SonarQube Token (Important Step):
+   Before running the workflow:
+   Go to:
+     GitHub Repo → Settings → Secrets and Variables → Actions
+            Add:
+      
+               Name: sonarQubeToken
+               Value: From:
+               
+               SonarQube server OR
+               mcp.json file
+    ✅ Without this, SonarQube scan will fail
 
-3. Build the project:
-   ```bash
-   # For Maven
-   mvn clean install
+4. Enable Copilot Agent Mode:
+      Open repo in VS Code
+      Open Copilot Chat
+      Select Agent mode
+   
+Agent-Based Workflow Execution
+    This project follows a 6-phase modernization workflow defined in copilot-instructions:
 
-   # For Gradle
-   gradle clean build
-   ```
+## FULL AUTOMATED FLOW (Recommended)
+ Run this command:
+  @java-modernization-orchestrator Start the full Java modernization workflow
 
-4. Run the application:
-   ```bash
-   # For Maven
-   mvn spring-boot:run
 
-   # For Gradle
-   gradle bootRun
-   ```
+
+What it does:
+
+Automatically executes all phases
+Creates branch: feature/java-modernization
+Runs refactoring end-to-end
+Commits & pushes changes
+Ensures quality gates are passed
 
 ## Automated Modernization Workflow
-
 This project uses custom GitHub Copilot agents to automate the modernization process:
 
 ### Phase 0: Setup
