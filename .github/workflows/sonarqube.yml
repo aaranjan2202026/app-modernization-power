@@ -3,20 +3,13 @@ name: JavaModernization/sonarqube_custom_agent
 on:
   workflow_dispatch:
     inputs:
-      buildProfile:
-        default: default
-        type: string
-        required: false
-      projectDir:
-        description: 'Project directory containing pom.xml'
-        default: 'Hospital_Servlet1'
+      buildConfiguration:
+        default: Release
         type: string
         required: false
 
 env:
   sonarQubeUrl: https://sonarqube-hub.azurewebsites.net
-  JAVA_VERSION: '17'
-  PROJECT_DIR: ${{ inputs.projectDir || 'Hospital_Servlet1' }}
 
 jobs:
   SonarQube-Scan:
@@ -27,27 +20,32 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up JDK ${{ env.JAVA_VERSION }}
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          java-version: ${{ env.JAVA_VERSION }}
+          java-version: '17'
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Build with Maven
-        working-directory: ${{ env.PROJECT_DIR }}
-        run: mvn clean verify -DskipTests
+      - name: Find and Build Java Project
+        run: |
+          POM_FILE=$(find . -name "pom.xml" -not -path "*/target/*" | head -n 1)
+          if [ -z "$POM_FILE" ]; then
+            echo "No pom.xml found"
+            exit 1
+          fi
+          echo "Found pom.xml at: $POM_FILE"
+          mvn clean verify -DskipTests -f "$POM_FILE"
+        shell: bash
 
       - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@v2
-        with:
-          projectBaseDir: ${{ env.PROJECT_DIR }}
-          args: >
-            -Dsonar.projectKey=Refactoring-legacy-Pharmacy-uc2
-            -Dsonar.projectName=Refactoring-legacy-Pharmacy-uc2
-            -Dsonar.host.url=${{ env.sonarQubeUrl }}
-            -Dsonar.login=${{ secrets.sonarQubeToken }}
-            -Dsonar.java.source=${{ env.JAVA_VERSION }}
-            -Dsonar.java.binaries=target/classes
-            -Dsonar.exclusions=documentation/*,.vscode/*,**/target/**
+        run: |
+          POM_FILE=$(find . -name "pom.xml" -not -path "*/target/*" | head -n 1)
+          mvn sonar:sonar -f "$POM_FILE" \
+            -Dsonar.projectKey=Refactoring-legacy-Hospital-uc2 \
+            -Dsonar.projectName=Refactoring-legacy-Hospital-uc2 \
+            -Dsonar.host.url=${{ env.sonarQubeUrl }} \
+            -Dsonar.token=${{ secrets.sonarQubeToken }} \
+            -Dsonar.exclusions=**/webapp/**,**/assets/** \
             -Dsonar.newCode.referenceBranch=main
+        shell: bash

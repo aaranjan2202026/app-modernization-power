@@ -6,7 +6,7 @@ applyTo: "**"
 
 ## SonarQube Configuration
 
-sonarqube project name = "Refactoring-legacy-Pharmacy-uc2"
+sonarqube project name = "Refactoring-legacy-Hospital-uc2"
 sonarqube server = "https://sonarqube-hub.azurewebsites.net"
 
 ## Workflow
