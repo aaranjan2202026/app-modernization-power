@@ -3,20 +3,13 @@ name: JavaModernization/sonarqube_custom_agent
 on:
   workflow_dispatch:
     inputs:
-      buildProfile:
-        default: default
-        type: string
-        required: false
-      projectDir:
-        description: 'Project directory containing pom.xml'
-        default: 'Hospital_Servlet1'
+      buildConfiguration:
+        default: Release
         type: string
         required: false
 
 env:
   sonarQubeUrl: https://sonarqube-hub.azurewebsites.net
-  JAVA_VERSION: '17'
-  PROJECT_DIR: ${{ inputs.projectDir || 'Hospital_Servlet1' }}
 
 jobs:
   SonarQube-Scan:
@@ -27,27 +20,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up JDK ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v3
-        with:
-          java-version: ${{ env.JAVA_VERSION }}
-          distribution: 'temurin'
-          cache: 'maven'
-
-      - name: Build with Maven
-        working-directory: ${{ env.PROJECT_DIR }}
-        run: mvn clean verify -DskipTests
-
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@v2
         with:
-          projectBaseDir: ${{ env.PROJECT_DIR }}
+          projectBaseDir: .
           args: >
-            -Dsonar.projectKey=Refactoring-legacy-Pharmacy-uc2
-            -Dsonar.projectName=Refactoring-legacy-Pharmacy-uc2
+            -Dsonar.projectKey=Refactoring-legacy-hospital-uc2
+            -Dsonar.projectName=Refactoring-legacy-hospital-uc2
             -Dsonar.host.url=${{ env.sonarQubeUrl }}
             -Dsonar.login=${{ secrets.sonarQubeToken }}
-            -Dsonar.java.source=${{ env.JAVA_VERSION }}
-            -Dsonar.java.binaries=target/classes
-            -Dsonar.exclusions=documentation/*,.vscode/*,**/target/**
+            -Dsonar.exclusions=documentation/*,.vscode/*,**/wwwroot/**
             -Dsonar.newCode.referenceBranch=main
