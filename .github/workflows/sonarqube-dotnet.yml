@@ -1,0 +1,78 @@
+name: DotNetModernization/sonarqube_custom_agent
+
+on:
+  workflow_dispatch:
+    inputs:
+      buildConfiguration:
+        default: Release
+        type: string
+        required: false
+
+env:
+  sonarQubeUrl: https://sonarqube-hub.azurewebsites.net
+
+jobs:
+  SonarQube-Scan:
+    name: SonarQube Analysis (.NET)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
+      - name: Install SonarScanner for .NET
+        run: dotnet tool install --global dotnet-sonarscanner
+
+      - name: Find .NET project
+        id: find_project
+        run: |
+          SLN_FILE=$(find . -name "*.sln" -not -path "*/bin/*" -not -path "*/obj/*" | head -n 1)
+          if [ -n "$SLN_FILE" ]; then
+            echo "PROJECT_FILE=$SLN_FILE" >> $GITHUB_ENV
+            echo "Found solution: $SLN_FILE"
+          else
+            CSPROJ_FILE=$(find . -name "*.csproj" -not -path "*/bin/*" -not -path "*/obj/*" | head -n 1)
+            if [ -n "$CSPROJ_FILE" ]; then
+              echo "PROJECT_FILE=$CSPROJ_FILE" >> $GITHUB_ENV
+              echo "Found project: $CSPROJ_FILE"
+            else
+              echo "No .sln or .csproj found"
+              exit 1
+            fi
+          fi
+        shell: bash
+
+      - name: Begin SonarQube Analysis
+        run: |
+          dotnet sonarscanner begin \
+            /k:"Refactoring-legacy-DotNet-uc2" \
+            /n:"Refactoring-legacy-DotNet-uc2" \
+            /d:sonar.host.url="${{ env.sonarQubeUrl }}" \
+            /d:sonar.token="${{ secrets.sonarQubeToken }}" \
+            /d:sonar.newCode.referenceBranch=main \
+            /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml"
+        shell: bash
+
+      - name: Build .NET Project
+        run: dotnet build "${{ env.PROJECT_FILE }}" --configuration ${{ inputs.buildConfiguration || 'Release' }}
+        shell: bash
+
+      - name: Run Tests with Coverage
+        run: |
+          dotnet test "${{ env.PROJECT_FILE }}" \
+            --configuration ${{ inputs.buildConfiguration || 'Release' }} \
+            --collect:"XPlat Code Coverage;Format=opencover" \
+            --results-directory ./TestResults \
+            --no-build \
+            -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+        continue-on-error: true
+        shell: bash
+
+      - name: End SonarQube Analysis
+        run: dotnet sonarscanner end /d:sonar.token="${{ secrets.sonarQubeToken }}"
+        shell: bash
