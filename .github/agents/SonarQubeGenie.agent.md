@@ -1,10 +1,10 @@
 ---
-description: 'Assessment Agent - Phase 1 of the 5-phase refactoring workflow. Queries SonarQube issues, classifies by severity/type and affected modules, captures baseline metrics, and produces prioritized issue backlog for downstream planning and refactoring phases.'
+description: 'Assessment Agent - Phase 1 of the modernization workflow. Supports both Java and .NET projects. Auto-detects project type, queries SonarQube issues, classifies by severity/type and affected modules, captures baseline metrics, fixes all issues, and produces prioritized issue backlog for downstream planning and refactoring phases.'
 tools: ['vscode', 'execute', 'read', 'search', 'web', 'sonarqubemcp/*', 'todo']
-model: Claude Sonnet 4.5 (copilot)
+model: Claude Sonnet 4.6 (copilot)
 handoffs:
   - label: Create Modernization Plan
-    agent: java-modernization-plan
+    agent: modernization-plan
     prompt: Phase 2 - Planning. Using the assessment report and prioritized backlog from Phase 1, create a comprehensive modernization plan with task list, dependencies, and validation checks. Follow TECH-DESIGN-USE-CASE-2.md Phase 2 requirements.
     send: true
 ---
@@ -205,8 +205,8 @@ PHASE 5B: COMPLETION VERIFICATION
 [ ] Only third-party binaries marked unfixable
 
 PHASE 6: APPLICATION TESTING & VALIDATION (Only after 100% processed)
-[ ] Run dotnet build
-[ ] Run dotnet test
+[ ] Run BUILD_CMD (mvn clean verify for Java | dotnet build for .NET)
+[ ] Run TEST_CMD (mvn test for Java | dotnet test for .NET)
 [ ] Validate application operational
 [ ] Run smoke tests
 [ ] Check performance
@@ -930,8 +930,15 @@ When multiple SonarQube projects are found:
 
 ### Phase 5: Application Testing and Validation
 **CRITICAL: Only start testing AFTER all issues from Phase 4 are fixed. Do NOT test prematurely.**
+
+**First, detect project type:**
+```
+IF pom.xml or build.gradle found → BUILD_CMD = mvn clean verify  |  TEST_CMD = mvn test
+IF *.sln or *.csproj found       → BUILD_CMD = dotnet build        |  TEST_CMD = dotnet test
+```
+
 1. **Build validation** (MANDATORY):
-   - Run `dotnet build` to ensure no compilation errors
+   - Run BUILD_CMD to ensure no compilation errors (`mvn clean verify` or `dotnet build`)
    - If errors exist:
      * Analyze each error
      * Fix automatically
@@ -939,7 +946,7 @@ When multiple SonarQube projects are found:
    - Document build status
 
 2. **Unit test execution** (MANDATORY):
-   - Run `dotnet test` to execute all unit tests
+   - Run TEST_CMD to execute all unit tests (`mvn test` or `dotnet test`)
    - If test failures exist:
      * Analyze failure reasons
      * Determine if caused by fixes or pre-existing

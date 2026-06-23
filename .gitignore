@@ -1,0 +1,33 @@
+# Maven build output
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# .NET build output
+bin/
+obj/
+*.user
+*.suo
+.vs/
+TestResults/
+
+# IDE files
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+*.swp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment / secrets
+*.env
+.env
+application-local.properties
+appsettings.local.json

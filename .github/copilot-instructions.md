@@ -6,53 +6,69 @@ applyTo: "**"
 
 ## SonarQube Configuration
 
+### Java Project
 sonarqube project name = "Refactoring-legacy-Hospital-uc2"
+sonarqube server = "https://sonarqube-hub.azurewebsites.net"
+
+### .NET Project
+sonarqube dotnet project name = "Refactoring-legacy-DotNet-uc2"
 sonarqube server = "https://sonarqube-hub.azurewebsites.net"
 
 ## Workflow
 
+All agents **auto-detect** whether the workspace contains a Java project (`pom.xml`/`build.gradle`) or a .NET project (`*.sln`/`*.csproj`) and adjust their commands, branch, and patterns accordingly.
+
 This workspace uses a 5-phase automated modernization workflow with SonarQube scanning:
 
-**Phase 0 — Baseline Scan**: Trigger `.github/workflows/sonarqube.yml` to generate fresh SonarQube report
+**Phase 0 — Baseline Scan**:
+- Java: Trigger `.github/workflows/sonarqube.yml`
+- .NET: Trigger `.github/workflows/sonarqube-dotnet.yml`
 
 1. **Phase 1 — Assess**: `@SonarQubeGenie` fetches and fixes all SonarQube issues
-2. **Phase 2 — Plan**: `@java-modernization-plan` creates the refactoring task plan
-3. **Phase 3 — Refactor**: `@java-modernization-developer` executes all tasks
-4. **Phase 4 — Validate**: `@java-modernization-validator` enforces Gate G4
+2. **Phase 2 — Plan**: `@modernization-plan` creates the refactoring task plan
+3. **Phase 3 — Refactor**: `@modernization-developer` executes all tasks
+4. **Phase 4 — Validate**: `@modernization-validator` enforces Gate G4
 5. **Phase 5 — Deploy**: Orchestrator triggers Azure DevOps pipeline
 
-**Phase 6 — Final Scan**: Trigger `.github/workflows/sonarqube.yml` again to show before/after metrics (errors resolved vs remaining)
+**Phase 6 — Final Scan**: Re-trigger the appropriate workflow to show before/after metrics
 
 ## To Run the Full Workflow
 
 ```
-@java-modernization-orchestrator Start the full Java modernization workflow
+# Java project:
+@modernization-orchestrator Start the full Java modernization workflow
+
+# .NET project:
+@modernization-orchestrator Start the full .NET modernization workflow
 ```
 
 ## To Run Individual Phases
 
 ```
 @SonarQubeGenie Fix all SonarQube issues
-@java-modernization-plan Create modernization plan
-@java-modernization-developer Execute all modernization tasks
-@java-modernization-validator Run full validation
+@modernization-plan Create modernization plan
+@modernization-developer Execute all modernization tasks
+@modernization-validator Run full validation
 ```
 
-## Working Branch
+## Working Branches
 
-All agents work on: `feature/java-modernization`
+- Java projects: `feature/java-modernization`
+- .NET projects: `feature/dotnet-modernization`
+- Branch is auto-selected by agents based on detected project type
 
 ## SonarQube Workflow Triggers
 
 **Before Starting (Phase 0)**:
-- Orchestrator will automatically checkout `feature/java-modernization` branch
+- Orchestrator automatically checkouts the correct branch based on project type
 - Commits and pushes all agent configuration files to remote
-- User must then manually trigger baseline scan at: `https://github.com/Application-Modernization/cca-app-mod-demo-java-refactor-custom-agents/actions/workflows/sonarqube.yml`
-- Or run: `gh workflow run sonarqube.yml --ref feature/java-modernization` (GitHub CLI)
-- This generates the baseline report for `@SonarQubeGenie` to fetch issues
+- **Java**: Trigger `https://github.com/Application-Modernization/cca-app-mod-demo-java-refactor-custom-agents/actions/workflows/sonarqube.yml`
+  - Or run: `gh workflow run sonarqube.yml --ref feature/java-modernization`
+- **.NET**: Trigger `https://github.com/Application-Modernization/cca-app-mod-demo-java-refactor-custom-agents/actions/workflows/sonarqube-dotnet.yml`
+  - Or run: `gh workflow run sonarqube-dotnet.yml --ref feature/dotnet-modernization`
 
 **After Validation (Phase 6)**:
-- `@java-modernization-validator` triggers the workflow after all tests pass
+- `@modernization-validator` triggers the appropriate workflow after all tests pass
 - Compares baseline metrics vs post-refactoring metrics
 - Generates final quality report showing improvements
 
