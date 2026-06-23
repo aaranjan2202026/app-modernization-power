@@ -31,17 +31,17 @@ jobs:
       - name: Find .NET project
         id: find_project
         run: |
-          SLN_FILE=$(find . -name "*.sln" -not -path "*/bin/*" -not -path "*/obj/*" | head -n 1)
+          SLN_FILE=$(find ./pharmacy -name "*.sln" -not -path "*/bin/*" -not -path "*/obj/*" | head -n 1)
           if [ -n "$SLN_FILE" ]; then
             echo "PROJECT_FILE=$SLN_FILE" >> $GITHUB_ENV
             echo "Found solution: $SLN_FILE"
           else
-            CSPROJ_FILE=$(find . -name "*.csproj" -not -path "*/bin/*" -not -path "*/obj/*" | head -n 1)
+            CSPROJ_FILE=$(find ./pharmacy -name "*.csproj" -not -path "*/bin/*" -not -path "*/obj/*" | head -n 1)
             if [ -n "$CSPROJ_FILE" ]; then
               echo "PROJECT_FILE=$CSPROJ_FILE" >> $GITHUB_ENV
               echo "Found project: $CSPROJ_FILE"
             else
-              echo "No .sln or .csproj found"
+              echo "No .sln or .csproj found under ./pharmacy"
               exit 1
             fi
           fi
@@ -55,7 +55,8 @@ jobs:
             /d:sonar.host.url="${{ env.sonarQubeUrl }}" \
             /d:sonar.token="${{ secrets.sonarQubeToken }}" \
             /d:sonar.newCode.referenceBranch=main \
-            /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml"
+            /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" \
+            /d:sonar.exclusions="Hospital_Servlet1/**,**/*.java,**/*.jsp,**/*.class"
         shell: bash
 
       - name: Build .NET Project
