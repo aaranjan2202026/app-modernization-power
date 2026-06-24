@@ -35,11 +35,11 @@ namespace PharmacyNetwork.Web.Controllers
             if (User.IsInRole(AuthorizationConstants.Roles.USERS))
             {
                 var idPharm = await _mediator.Send(new GetPharmIdByUser(User));
-                var purchasesPharm = await _repository.ListAsync(new PurchasePharmSpecification(idPharm));
+                var purchasesPharm = await _repository.ListAsync(new PurchasePharmSpecification(idPharm), HttpContext.RequestAborted);
                 return View(purchasesPharm);
             }
 
-            var purchases = await _repository.GetAllAsync();
+            var purchases = await _repository.GetAllAsync(HttpContext.RequestAborted);
             return View(purchases);
         }
 
