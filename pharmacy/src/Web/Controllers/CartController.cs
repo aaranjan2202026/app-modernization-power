@@ -11,6 +11,7 @@ using PharmacyNetwork.ApplicationCore.Interfaces;
 using PharmacyNetwork.Infrastructure.Data;
 using PharmacyNetwork.Web.Extensions;
 using PharmacyNetwork.Web.Models;           
+using PharmacyNetwork.Web.Services;
 using PharmacyNetwork.Web.ViewModels;
 
 namespace PharmacyNetwork.Web.Controllers
@@ -18,11 +19,17 @@ namespace PharmacyNetwork.Web.Controllers
     [Authorize(Roles = AuthorizationConstants.Roles.USERS)]
     public class CartController : Controller
     {
-        private readonly PharmacyNetworkContext _context;
+        private readonly ICartService _cartService;
+        private readonly IAsyncRepository<Purchase> _purchaseRepository;
+        private readonly IAsyncRepository<Check> _checkRepository;
 
-        public CartController(PharmacyNetworkContext context)
+        public CartController(ICartService cartService,
+            IAsyncRepository<Purchase> purchaseRepository,
+            IAsyncRepository<Check> checkRepository)
         {
-            _context = context;
+            _cartService = cartService;
+            _purchaseRepository = purchaseRepository;
+            _checkRepository = checkRepository;
         }
 
         public IActionResult Index()
@@ -43,25 +50,7 @@ namespace PharmacyNetwork.Web.Controllers
                 return RedirectToAction("Index");
             }
 
-            var reservationStart = DateTime.Now;
-            var reservationEnd = reservationStart.AddHours(24); // 24-hour reservation period
-            
-            foreach (var item in cart)
-            {
-                var reservation = new ReservedMedItem
-                {
-                    DateStart = reservationStart,
-                    DateFinish = reservationEnd,
-                    MedItemId = item.MedicalItemId,
-                    PharmId = item.PharmacyId,
-                    Count = item.Count,
-                    Telephone = viewModel.Telephone
-                };
-
-                _context.ReservedMedItem.Add(reservation);
-            }
-
-            await _context.SaveChangesAsync();
+            await _cartService.ReserveItemsAsync(cart, viewModel.Telephone, HttpContext.RequestAborted);
             ClearCart();
 
             return RedirectToAction("Index", "ReservedMedItems"); 
@@ -93,12 +82,11 @@ namespace PharmacyNetwork.Web.Controllers
             {
                 PharmId = cart[0].PharmacyId,
                 PurchDate = DateTime.Now,
-                PurchAmount = 0, // Will be calculated later
+                PurchAmount = 0,
                 PurchDiscountPercent = 0
             };
 
-            _context.Purchase.Add(purchase);
-            await _context.SaveChangesAsync();
+            await _purchaseRepository.AddAsync(purchase, HttpContext.RequestAborted);
 
             // Add items to check (purchase details)
             decimal totalAmount = 0;
@@ -111,13 +99,13 @@ namespace PharmacyNetwork.Web.Controllers
                     ItemCount = item.Count
                 };
 
-                _context.Check.Add(check);
+                await _checkRepository.AddAsync(check, HttpContext.RequestAborted);
                 totalAmount += item.MedItemPrice * item.Count;
             }
 
             // Update purchase amount
             purchase.PurchAmount = totalAmount;
-            await _context.SaveChangesAsync();
+            await _purchaseRepository.UpdateAsync(purchase, HttpContext.RequestAborted);
 
             ClearCart();
 
