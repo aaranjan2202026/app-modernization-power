@@ -27,7 +27,7 @@ namespace PharmacyNetwork.Web.Controllers
         // GET: Firms
         public async Task<IActionResult> Index()
         {
-            var firms = await _repository.GetAllAsync();
+            var firms = await _repository.GetAllAsync(HttpContext.RequestAborted);
             return View(firms);
         }
 
@@ -37,7 +37,7 @@ namespace PharmacyNetwork.Web.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
             if (id == null) return NotFound();
 
-            var firm = await _repository.GetByIdAsync(id);
+            var firm = await _repository.GetByIdAsync(id, HttpContext.RequestAborted);
             if (firm == null)
             {
                 return NotFound();
@@ -59,7 +59,7 @@ namespace PharmacyNetwork.Web.Controllers
                 return View(firm);
             }
 
-            await _repository.AddAsync(firm);
+            await _repository.AddAsync(firm, HttpContext.RequestAborted);
             return RedirectToAction(nameof(Index));
         }
 
@@ -70,7 +70,7 @@ namespace PharmacyNetwork.Web.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
             if (id == null) return NotFound();
 
-            var firm = await _repository.GetByIdAsync(id);
+            var firm = await _repository.GetByIdAsync(id, HttpContext.RequestAborted);
             if (firm == null) return NotFound();
 
             return View("Edit", firm);
@@ -86,7 +86,7 @@ namespace PharmacyNetwork.Web.Controllers
             {
                 try
                 {
-                    await _repository.UpdateAsync(firm);
+                    await _repository.UpdateAsync(firm, HttpContext.RequestAborted);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -114,7 +114,7 @@ namespace PharmacyNetwork.Web.Controllers
                 return NotFound();
             }
 
-            var firm = await _repository.GetByIdAsync(id);
+            var firm = await _repository.GetByIdAsync(id, HttpContext.RequestAborted);
             if (firm == null)
             {
                 return NotFound();
@@ -130,8 +130,8 @@ namespace PharmacyNetwork.Web.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            var firm = await _repository.GetByIdAsync(id);
-            await _repository.DeleteAsync(firm);
+            var firm = await _repository.GetByIdAsync(id, HttpContext.RequestAborted);
+            await _repository.DeleteAsync(firm, HttpContext.RequestAborted);
             return RedirectToAction(nameof(Index));
         }
 
