@@ -9,10 +9,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using PharmacyNetwork.ApplicationCore.Interfaces;
 using PharmacyNetwork.Infrastructure.Data;
 using  PharmacyNetwork.Infrastructure.Identity;
 using PharmacyNetwork.Infrastructure.Logging;
+using PharmacyNetwork.Web.Options;
+using PharmacyNetwork.Web.Services;
 
 namespace PharmacyNetwork.Web
 {
@@ -35,24 +38,33 @@ namespace PharmacyNetwork.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            CreateIdentityIfNotCreated(services);
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddDefaultUI()
+                .AddEntityFrameworkStores<AppIdentityDbContext>()
+                .AddDefaultTokenProviders();
 
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
             services.AddScoped(typeof(IAppLogger<>), typeof(LoggerAdapter<>));
+            services.AddScoped<ICartService, CartService>();
+
+            // Bind configuration options
+            services.Configure<SessionSettings>(Configuration.GetSection("Session"));
+            services.Configure<DatabaseRetryOptions>(Configuration.GetSection("DatabaseRetry"));
 
             // Add Identity DbContext
             services.AddDbContext<AppIdentityDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("IdentityConnection")));
-            
+
             //Add PharmacyNetwork DbContext
-            services.AddDbContext<PharmacyNetworkContext>(options =>
+            services.AddDbContext<PharmacyNetworkContext>((sp, options) =>
                 {
+                    var retryOptions = sp.GetRequiredService<IOptions<DatabaseRetryOptions>>().Value;
                     options.UseSqlServer(Configuration.GetConnectionString("PharmacyNetworkConnection"),
                     sqlServerOptionsAction: sqlOption =>
                     {
                         sqlOption.EnableRetryOnFailure(
-                            maxRetryCount: 5,
-                            maxRetryDelay: TimeSpan.FromSeconds(30),
+                            maxRetryCount: retryOptions.MaxRetryCount,
+                            maxRetryDelay: TimeSpan.FromSeconds(retryOptions.MaxRetryDelaySeconds),
                             errorNumbersToAdd: null);
                     });
                 });
@@ -78,35 +90,19 @@ namespace PharmacyNetwork.Web
                 options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
             });
 
-            services.AddSession(options =>
+            services.AddSession((options) =>
             {
-                options.Cookie.Name = ".PharmNet.Session";
-                options.IdleTimeout = TimeSpan.FromMinutes(15);
-                options.Cookie.HttpOnly = true;
-                options.Cookie.IsEssential = true;
+                var sessionSettings = Configuration.GetSection("Session").Get<SessionSettings>() ?? new SessionSettings();
+                options.Cookie.Name = sessionSettings.CookieName;
+                options.IdleTimeout = TimeSpan.FromMinutes(sessionSettings.IdleTimeoutMinutes);
+                options.Cookie.HttpOnly = sessionSettings.CookieHttpOnly;
+                options.Cookie.IsEssential = sessionSettings.CookieIsEssential;
             });
 
             services.AddMemoryCache();
 
             // Inject an implementation of ISwaggerProvider with defaulted settings applied
             services.AddSwaggerGen();
-        }
-
-        private static void CreateIdentityIfNotCreated(IServiceCollection services)
-        {
-            var sp = services.BuildServiceProvider();
-            using var scope = sp.CreateScope();
-
-            var existingUserManager = scope.ServiceProvider
-                .GetService<UserManager<ApplicationUser>>();
-
-            if (existingUserManager == null)
-            {
-                services.AddIdentity<ApplicationUser, IdentityRole>()
-                    .AddDefaultUI()
-                    .AddEntityFrameworkStores<AppIdentityDbContext>()
-                    .AddDefaultTokenProviders();
-            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
