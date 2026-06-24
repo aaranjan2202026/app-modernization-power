@@ -42,7 +42,7 @@ namespace PharmacyNetwork.Web.Controllers
         public async Task<IActionResult> Index()
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            var incomes = await _repository.GetAllAsync();
+            var incomes = await _repository.GetAllAsync(HttpContext.RequestAborted);
             return View(incomes);
         }
 
@@ -133,13 +133,13 @@ namespace PharmacyNetwork.Web.Controllers
                     IncomeDate = DateTime.Now
                 };
 
-                var createdIncome = await _repository.AddAsync(newIncome);
+                var createdIncome = await _repository.AddAsync(newIncome, HttpContext.RequestAborted);
 
                 // Create income details for each item
                 foreach (var item in incomeItems)
                 {
                     // Get the medical item to calculate price
-                    var medicalItem = await _medicalItemRepository.GetByIdAsync(item.MedicalItemId);
+                    var medicalItem = await _medicalItemRepository.GetByIdAsync(item.MedicalItemId, HttpContext.RequestAborted);
                     if (medicalItem != null)
                     {
                         var incomeDetail = new IncomeDetail
@@ -150,7 +150,7 @@ namespace PharmacyNetwork.Web.Controllers
                             Price = medicalItem.MedItemPrice * item.Count // Calculate total price
                         };
 
-                        await _incomeDetailRepository.AddAsync(incomeDetail);
+                        await _incomeDetailRepository.AddAsync(incomeDetail, HttpContext.RequestAborted);
                     }
                 }
 
