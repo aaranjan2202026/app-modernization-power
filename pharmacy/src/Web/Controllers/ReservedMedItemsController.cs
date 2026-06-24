@@ -33,11 +33,11 @@ namespace PharmacyNetwork.Web.Controllers
             if (User.IsInRole(AuthorizationConstants.Roles.USERS))
             {
                 var idPharm = await _mediator.Send(new GetPharmIdByUser(User));
-                var reservedMedItemsList = await _repository.ListAsync(new ReserveMedItemsByPharmacySpecification(idPharm));
+                var reservedMedItemsList = await _repository.ListAsync(new ReserveMedItemsByPharmacySpecification(idPharm), HttpContext.RequestAborted);
                 return View(reservedMedItemsList);
             }
 
-            var reservedItemsList = await _repository.GetAllAsync();
+            var reservedItemsList = await _repository.GetAllAsync(HttpContext.RequestAborted);
             return View(reservedItemsList);
         }
 
@@ -47,30 +47,24 @@ namespace PharmacyNetwork.Web.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
             if (id == null) return NotFound();
 
-            var reserved = await _repository.GetByIdAsync(id);
+            var reserved = await _repository.GetByIdAsync(id, HttpContext.RequestAborted);
             if (reserved == null) return NotFound();
 
             return View(reserved);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Remove(int? id)
         {
             if (id == null) return NotFound();
 
             try
             {
-                var reservedItem = await _repository.GetByIdAsync(id.Value);
+                var reservedItem = await _repository.GetByIdAsync(id.Value, HttpContext.RequestAborted);
                 if (reservedItem == null) return NotFound();
 
-                // Optional: Add authorization check if needed
-                // if (User.IsInRole(AuthorizationConstants.Roles.USERS))
-                // {
-                //     var userPharmId = await _mediator.Send(new GetPharmIdByUser(User));
-                //     if (reservedItem.PharmId != userPharmId)
-                //         return Forbid();
-                // }
-
-                await _repository.DeleteAsync(reservedItem);
+                await _repository.DeleteAsync(reservedItem, HttpContext.RequestAborted);
                 
             }
             catch (Exception)
