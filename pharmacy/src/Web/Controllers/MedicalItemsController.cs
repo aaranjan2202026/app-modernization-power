@@ -46,7 +46,7 @@ namespace PharmacyNetwork.Web.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
             if (id == null) return NotFound();
 
-            var medicalItem = await _repository.GetByIdAsync(id);
+            var medicalItem = await _repository.GetByIdAsync(id, HttpContext.RequestAborted);
             if (medicalItem == null) return NotFound();
 
             var viewModel = new MedicalItemsDetailViewModel()
@@ -74,7 +74,7 @@ namespace PharmacyNetwork.Web.Controllers
         {
             if (!ModelState.IsValid) return View(medicalItemViewModel);
 
-            await _repository.AddAsync(medicalItemViewModel.MedicalItem);
+            await _repository.AddAsync(medicalItemViewModel.MedicalItem, HttpContext.RequestAborted);
             return RedirectToAction(nameof(Index));
         }
 
@@ -101,7 +101,7 @@ namespace PharmacyNetwork.Web.Controllers
             {
                 try
                 {
-                    await _repository.UpdateAsync(medicalItemViewModel.MedicalItem);
+                    await _repository.UpdateAsync(medicalItemViewModel.MedicalItem, HttpContext.RequestAborted);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -125,7 +125,7 @@ namespace PharmacyNetwork.Web.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
             if (id == null) return NotFound();
 
-            var medicalItem = await _repository.GetByIdAsync(id);
+            var medicalItem = await _repository.GetByIdAsync(id, HttpContext.RequestAborted);
             if (medicalItem == null) return NotFound();
 
             return View(medicalItem);
@@ -139,9 +139,9 @@ namespace PharmacyNetwork.Web.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             if (id == null) return NotFound();
-            var medicalItem = await _repository.GetByIdAsync(id);
+            var medicalItem = await _repository.GetByIdAsync(id, HttpContext.RequestAborted);
             if (medicalItem == null) return NotFound();
-            await _repository.DeleteAsync(medicalItem);
+            await _repository.DeleteAsync(medicalItem, HttpContext.RequestAborted);
             return RedirectToAction(nameof(Index));
         }
 
