@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Extensions.Logging;
@@ -17,12 +17,12 @@ namespace PharmacyNetwork.Infrastructure.Logging
 
         public void LogInformation(string message, params object[] args)
         {
-            _logger.LogInformation(message, args);
+            _logger.LogInformation("{Message}", args.Length > 0 ? string.Format(message, args) : message);
         }
 
         public void LogWarning(string message, params object[] args)
         {
-            _logger.LogWarning(message, args);
+            _logger.LogWarning("{Message}", args.Length > 0 ? string.Format(message, args) : message);
         }
     }
 }

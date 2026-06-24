@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,6 +29,7 @@ namespace PharmacyNetwork.Web.Controllers
         // GET: ReservedMedItems
         public async Task<IActionResult> Index()
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             if (User.IsInRole(AuthorizationConstants.Roles.USERS))
             {
                 var idPharm = await _mediator.Send(new GetPharmIdByUser(User));
@@ -43,6 +44,7 @@ namespace PharmacyNetwork.Web.Controllers
         // GET: ReservedMedItems/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             if (id == null) return NotFound();
 
             var reserved = await _repository.GetByIdAsync(id);
@@ -70,13 +72,9 @@ namespace PharmacyNetwork.Web.Controllers
 
                 await _repository.DeleteAsync(reservedItem);
                 
-                // You could add a success message here
-                // TempData["SuccessMessage"] = "Reserved item successfully removed.";
             }
             catch (Exception)
             {
-                // Handle any database errors
-                // TempData["ErrorMessage"] = "An error occurred while removing the reservation.";
                 return RedirectToAction(nameof(Index));
             }
 

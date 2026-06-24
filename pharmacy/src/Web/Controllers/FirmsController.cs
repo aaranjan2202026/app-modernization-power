@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -34,6 +34,7 @@ namespace PharmacyNetwork.Web.Controllers
         // GET: Firms/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             if (id == null) return NotFound();
 
             var firm = await _repository.GetByIdAsync(id);
@@ -66,15 +67,13 @@ namespace PharmacyNetwork.Web.Controllers
         [Authorize(Roles = AuthorizationConstants.Roles.ADMINSTRATORS)]
         public async Task<IActionResult> Edit(int? id)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             if (id == null) return NotFound();
 
             var firm = await _repository.GetByIdAsync(id);
-            if (firm == null)
-            {
-                return NotFound();
-            }
+            if (firm == null) return NotFound();
 
-            return View(firm);
+            return View("Edit", firm);
         }
 
         // POST: Firms/Edit/5
@@ -109,6 +108,7 @@ namespace PharmacyNetwork.Web.Controllers
         [Authorize(Roles = AuthorizationConstants.Roles.ADMINSTRATORS)]
         public async Task<IActionResult> Delete(int? id)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             if (id == null)
             {
                 return NotFound();
@@ -129,6 +129,7 @@ namespace PharmacyNetwork.Web.Controllers
         [Authorize(Roles = AuthorizationConstants.Roles.ADMINSTRATORS)]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             var firm = await _repository.GetByIdAsync(id);
             await _repository.DeleteAsync(firm);
             return RedirectToAction(nameof(Index));

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,6 +31,7 @@ namespace PharmacyNetwork.Web.Controllers
         // GET: Purchases
         public async Task<IActionResult> Index()
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             if (User.IsInRole(AuthorizationConstants.Roles.USERS))
             {
                 var idPharm = await _mediator.Send(new GetPharmIdByUser(User));
@@ -45,6 +46,7 @@ namespace PharmacyNetwork.Web.Controllers
         // GET: Purchases/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             if (id == null) return NotFound();
 
             var purchaseCheckViewModel = await _mediator.Send(new GetPurchaseCheck(id));
@@ -56,23 +58,8 @@ namespace PharmacyNetwork.Web.Controllers
         // GET: Purchases/Create
         public IActionResult Create()
         {
-            // TODO: Add Create Action
             return View();
         }
 
-        //// POST: Purchases/Create
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("PurchId,PharmId,PurchDate,PurchAmount,PurchDiscountPercent")] Purchase purchase)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        _context.Add(purchase);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    ViewData["PharmId"] = new SelectList(_context.Pharmacy, "PharmId", "PharmAddress", purchase.PharmId);
-        //    return View(purchase);
-        //}
     }
 }

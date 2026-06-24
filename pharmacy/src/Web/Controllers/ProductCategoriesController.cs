@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -41,6 +41,7 @@ namespace PharmacyNetwork.Web.Controllers
         public async Task<IActionResult> Create(ProductCategory productCategory)
         {
             if (!ModelState.IsValid) return View(productCategory);
+            if (!ModelState.IsValid) return View(productCategory);
 
             await _repository.AddAsync(productCategory);
             return RedirectToAction(nameof(Index));
@@ -50,6 +51,7 @@ namespace PharmacyNetwork.Web.Controllers
         [Authorize(Roles = AuthorizationConstants.Roles.ADMINSTRATORS)]
         public async Task<IActionResult> Edit(int? id)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             if (id == null) return NotFound();
 
             var productCategory = await _repository.GetByIdAsync(id);
@@ -64,6 +66,7 @@ namespace PharmacyNetwork.Web.Controllers
         [Authorize(Roles = AuthorizationConstants.Roles.ADMINSTRATORS)]
         public async Task<IActionResult> Edit(ProductCategory productCategory)
         {
+            if (!ModelState.IsValid) return View("Edit", productCategory);
             if (ModelState.IsValid)
             {
                 try
@@ -90,6 +93,7 @@ namespace PharmacyNetwork.Web.Controllers
         [Authorize(Roles = AuthorizationConstants.Roles.ADMINSTRATORS)]
         public async Task<IActionResult> Delete(int? id)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             if (id == null) return NotFound();
 
             var productCategory = await _repository.GetByIdAsync(id);

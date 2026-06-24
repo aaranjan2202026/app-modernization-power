@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -38,7 +38,7 @@ namespace PharmacyNetwork.Web.Controllers
 
             if (!ModelState.IsValid) return View(new ReserveMedItemsViewModel() { Items = cart });
 
-            if (cart == null || !cart.Any())
+            if (cart == null || cart.Count == 0)
             {
                 return RedirectToAction("Index");
             }
@@ -83,7 +83,7 @@ namespace PharmacyNetwork.Web.Controllers
         {
             var cart = HttpContext.Session.Get<List<CartItem>>("Cart");
 
-            if (cart == null || !cart.Any())
+            if (cart == null || cart.Count == 0)
             {
                 return RedirectToAction("Index");
             }
@@ -126,6 +126,7 @@ namespace PharmacyNetwork.Web.Controllers
 
         public IActionResult AddToCart(int medItemId, decimal medItemPrice, int pharmId, int count)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             var cartItem = new CartItem()
             {
                 MedicalItemId = medItemId,
@@ -159,6 +160,7 @@ namespace PharmacyNetwork.Web.Controllers
 
         public IActionResult DeleteFromCart(int id)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             var cartList = HttpContext.Session.Get<List<CartItem>>("Cart");
             
             cartList.RemoveAll(i => i.MedicalItemId == id);

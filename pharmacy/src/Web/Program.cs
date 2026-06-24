@@ -35,7 +35,7 @@ namespace PharmacyNetwork.Web
                 }
             }
 
-            host.Run();
+            await host.RunAsync();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

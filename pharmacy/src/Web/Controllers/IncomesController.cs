@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -41,6 +41,7 @@ namespace PharmacyNetwork.Web.Controllers
         // GET: Incomes
         public async Task<IActionResult> Index()
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             var incomes = await _repository.GetAllAsync();
             return View(incomes);
         }
@@ -48,9 +49,10 @@ namespace PharmacyNetwork.Web.Controllers
         // GET: Incomes/Create
         public async Task<IActionResult> Create(int? pharmacyId)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             var listIncomes = HttpContext.Session.Get<List<IncomeItem>>("Incomes");
 
-            if (listIncomes == null || !listIncomes.Any())
+            if (listIncomes == null || listIncomes.Count == 0)
             {
                 listIncomes = new List<IncomeItem>();
                 HttpContext.Session.Set<List<IncomeItem>>("Incomes", listIncomes);
@@ -63,6 +65,7 @@ namespace PharmacyNetwork.Web.Controllers
         // GET: Incomes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             if (id == null) return NotFound();
 
             var incomeDetailViewModel = await _mediator.Send(new GetIncomeDetail(id));
@@ -74,6 +77,7 @@ namespace PharmacyNetwork.Web.Controllers
         [Authorize(Roles = AuthorizationConstants.Roles.ADMINSTRATORS)]
         public IActionResult AddToIncome(int medItemId, int count)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             var incomeItem = new IncomeItem()
             {
                 MedicalItemId = medItemId,
@@ -99,6 +103,7 @@ namespace PharmacyNetwork.Web.Controllers
         [Authorize(Roles = AuthorizationConstants.Roles.ADMINSTRATORS)]
         public IActionResult DeleteFromIncome(int id)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             var incomeList = HttpContext.Session.Get<List<IncomeItem>>("Incomes");
 
             incomeList.RemoveAll(i => i.MedicalItemId == id);
@@ -111,14 +116,14 @@ namespace PharmacyNetwork.Web.Controllers
         [Authorize(Roles = AuthorizationConstants.Roles.ADMINSTRATORS)]
         public async Task<IActionResult> CreateIncomes(int idPharm)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             try
             {
                 var incomeItems = HttpContext.Session.Get<List<IncomeItem>>("Incomes");
 
-                if (incomeItems == null || !incomeItems.Any())
+                if (incomeItems == null || incomeItems.Count == 0)
                 {
-                    // TempData["ErrorMessage"] = "No items in income list.";
-                    return RedirectToAction(nameof(Create));
+                        return RedirectToAction(nameof(Create));
                 }
 
                 // Create the main Income record
@@ -152,13 +157,11 @@ namespace PharmacyNetwork.Web.Controllers
                 // Clear the session after successful creation
                 ClearIncome();
 
-                // TempData["SuccessMessage"] = "Income created successfully.";
                 return RedirectToAction("Details", "Incomes", new { id = createdIncome.IncomeId });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Log the exception if you have logging configured
-                // TempData["ErrorMessage"] = "An error occurred while creating the income.";
                 return RedirectToAction(nameof(Create));
             }
         }

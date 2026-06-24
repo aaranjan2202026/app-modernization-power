@@ -1,4 +1,4 @@
-﻿@model PharmacyNetwork.Web.ViewModels.MedicalItemViewModel
+@model PharmacyNetwork.Web.ViewModels.MedicalItemViewModel
 
 @{
     ViewData["Title"] = "Add New Item";
@@ -14,25 +14,25 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="MedicalItem.MedItemName" class="control-label"></label>
+                <label asp-for="MedicalItem.MedItemName" for="MedicalItem_MedItemName" class="control-label"></label>
                 <input asp-for="MedicalItem.MedItemName" class="form-control" />
                 <span asp-validation-for="MedicalItem.MedItemName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="MedicalItem.FirmId" class="control-label"></label>
+                <label asp-for="MedicalItem.FirmId" for="MedicalItem_FirmId" class="control-label"></label>
                 <select asp-for="MedicalItem.FirmId" class="form-control" asp-items="@Model.Firms"></select>
             </div>
             <div class="form-group">
-                <label asp-for="MedicalItem.CategId" class="control-label"></label>
+                <label asp-for="MedicalItem.CategId" for="MedicalItem_CategId" class="control-label"></label>
                 <select asp-for="MedicalItem.CategId" class="form-control" asp-items="@Model.Categories"></select>
             </div>
             <div class="form-group">
-                <label asp-for="MedicalItem.MedItemDescrip" class="control-label"></label>
+                <label asp-for="MedicalItem.MedItemDescrip" for="MedicalItem_MedItemDescrip" class="control-label"></label>
                 <textarea asp-for="MedicalItem.MedItemDescrip" class="form-control"></textarea>
                 <span asp-validation-for="MedicalItem.MedItemDescrip" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="MedicalItem.MedItemPrice" class="control-label"></label>
+                <label asp-for="MedicalItem.MedItemPrice" for="MedicalItem_MedItemPrice" class="control-label"></label>
                 <input asp-for="MedicalItem.MedItemPrice" class="form-control" />
                 <span asp-validation-for="MedicalItem.MedItemPrice" class="text-danger"></span>
             </div>

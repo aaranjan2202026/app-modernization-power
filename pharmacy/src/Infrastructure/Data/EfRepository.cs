@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,7 +17,7 @@ namespace PharmacyNetwork.Infrastructure.Data
             Context = context;
         }
 
-        public async Task<T> GetByIdAsync(int? id) //TODO: was added virtual in eShopWeb
+        public async Task<T> GetByIdAsync(int? id)
         {
             return await Context.Set<T>().FindAsync(id);
         }

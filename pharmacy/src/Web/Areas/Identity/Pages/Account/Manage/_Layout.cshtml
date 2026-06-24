@@ -1,4 +1,4 @@
-﻿@{
+@{
     Layout = "/Views/Shared/_Layout.cshtml";
 }
 
@@ -18,5 +18,5 @@
 </div>
 
 @section Scripts {
-    @RenderSection("Scripts", required: false)
+    @await RenderSectionAsync("Scripts", required: false)
 }
