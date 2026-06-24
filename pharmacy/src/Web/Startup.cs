@@ -69,7 +69,7 @@ namespace PharmacyNetwork.Web
                     });
                 });
 
-            services.AddAutoMapper(typeof(Startup));
+            services.AddAutoMapper(cfg => cfg.AddMaps(typeof(Startup).Assembly));
 
             services.AddControllersWithViews();
 
