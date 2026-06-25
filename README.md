@@ -1,6 +1,6 @@
-# Java Modernization Refactoring Demo
+# Java & .NET Modernization Refactoring Demo
 
-This project demonstrates automated Java application modernization using GitHub Copilot custom agents and SonarQube integration. The project transforms legacy Java 8 applications to modern Java 17+ with Spring Boot 3.x.
+This project demonstrates automated Java and .NET application modernization using GitHub Copilot custom agents and SonarQube integration. The project transforms legacy Java 8 applications to modern Java 17+ with Spring Boot 3.x, and legacy .NET applications to .NET 8+.
 
 ## Objectives
 
@@ -14,72 +14,73 @@ This project demonstrates automated Java application modernization using GitHub 
 
 ### Prerequisites
 
+#### Java Project
 1. **Java 17+ SDK** - Download from [Oracle](https://www.oracle.com/java/technologies/downloads/) or use OpenJDK
 2. **Maven 3.8+** or **Gradle 7.5+** - Build tools
-3. **VS Code** with GitHub Copilot extension
-4. **Git** for version control
-5. **SonarQube** access (optional for quality gates)
+
+#### .NET Project
+3. **.NET 8 SDK** - Download from [Microsoft](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+4. **ASP.NET Core runtime** - Included with .NET 8 SDK
+
+#### Common
+5. **VS Code** with GitHub Copilot extension
+6. **Git** for version control
+7. **SonarQube** access (optional for quality gates)
 
 ### Installation Process
 
-1. Clone Code from Main Branch:
-   ```bash
-   git clone <repository-url>
-   cd cca-app-mod-demo-java-refactor-custom-agents
-   ```
 
-2. Push Code to Your Own Repository:
-    Required: Workflow only runs on your repo
-    git remote remove origin
-    ```bash
-    
-      git remote add origin <your-repo-url>
-      git branch -M main
-      git push -u origin main
-    ```
-3. Add SonarQube Token (Important Step):
-   Before running the workflow:
-   Go to:
-     GitHub Repo → Settings → Secrets and Variables → Actions
-            Add:
-      
-               Name: sonarQubeToken
-               Value: From:
-               
-               SonarQube server OR
-               mcp.json file
-    ✅ Without this, SonarQube scan will fail
 
-4. Enable Copilot Agent Mode:
+1. Configure SonarQube in `.github/copilot-instructions.md`:
+
+   **Java Project**:
+   - `sonarqube project name = "Refactoring-legacy-Hospital-uc2"`
+   - `sonarqube server = "https://sonarqube-hub.azurewebsites.net"`
+
+   **.NET Project**:
+   - `sonarqube dotnet project name = "Refactoring-legacy-DotNet-uc2"`
+   - `sonarqube server = "https://sonarqube-hub.azurewebsites.net"`
+
+2. Enable Copilot Agent Mode:
       Open repo in VS Code
       Open Copilot Chat
       Select Agent mode
-   
+
 Agent-Based Workflow Execution
     This project follows a 6-phase modernization workflow defined in copilot-instructions:
 
 ## FULL AUTOMATED FLOW (Recommended)
- Run this command:
+ Run one of the following commands:
  ```bash
-  @java-modernization-orchestrator Start the full Java modernization workflow
+ # Java project:
+ @modernization-orchestrator Start the full Java modernization workflow
+
+ # .NET project:
+ @modernization-orchestrator Start the full .NET modernization workflow
 ```
-
-
 
 What it does:
 
-Automatically executes all phases
-Creates branch: feature/java-modernization
-Runs refactoring end-to-end
-Commits & pushes changes
-Ensures quality gates are passed
+- Automatically executes all phases (Phase 0 → Phase 6)
+- Auto-detects project type (Java or .NET) and selects the correct branch
+- Java branch: `feature/java-modernization` | .NET branch: `feature/dotnet-modernization`
+- Triggers baseline SonarQube scan, runs refactoring end-to-end
+- Commits & pushes changes with traceable task IDs
+- Enforces quality gates (G1–G5) before proceeding to each phase
 
 ## Automated Modernization Workflow
-This project uses custom GitHub Copilot agents to automate the modernization process:
+This project uses custom GitHub Copilot agents to automate the modernization process. All agents **auto-detect** the project type (Java or .NET) and adjust commands, branches, and patterns accordingly.
 
-### Phase 0: Setup
+### Phase 0: Baseline Scan
 - Configure SonarQube project in `.github/copilot-instructions.md`
-- Trigger baseline scan
+- **Java**: Trigger `.github/workflows/sonarqube.yml`
+  ```bash
+  gh workflow run sonarqube.yml --ref feature/java-modernization
+  ```
+- **.NET**: Trigger `.github/workflows/sonarqube-dotnet.yml`
+  ```bash
+  gh workflow run sonarqube-dotnet.yml --ref feature/dotnet-modernization
+  ```
 
 ### Phase 1: Assessment
 ```bash
@@ -88,22 +89,32 @@ This project uses custom GitHub Copilot agents to automate the modernization pro
 
 ### Phase 2: Planning
 ```bash
-@java-modernization-plan Create modernization plan
+@modernization-plan Create modernization plan
 ```
 
 ### Phase 3: Refactoring
 ```bash
-@java-modernization-developer Execute all modernization tasks
+@modernization-developer Execute all modernization tasks
 ```
 
 ### Phase 4: Validation
 ```bash
-@java-modernization-validator Run full validation
+@modernization-validator Run full validation
 ```
+
+### Phase 5: Deploy
+Orchestrator triggers Azure DevOps pipeline automatically.
+
+### Phase 6: Final Scan
+`@modernization-validator` re-triggers the appropriate SonarQube workflow after all tests pass and generates a final quality report comparing baseline vs. post-refactoring metrics.
 
 ### Or run the full workflow:
 ```bash
-@java-modernization-orchestrator Start the full Java modernization workflow
+# Java project:
+@modernization-orchestrator Start the full Java modernization workflow
+
+# .NET project:
+@modernization-orchestrator Start the full .NET modernization workflow
 ```
 
 ## Build and Test
@@ -138,21 +149,29 @@ gradle jacocoTestReport
 ## Project Structure
 
 ```
-├── src/
-│   ├── main/
-│   │   ├── java/              # Java source files
-│   │   └── resources/
-│   │       ├── application.yml           # Main config
-│   │       ├── application-dev.yml       # Dev config
-│   │       └── application-prod.yml      # Prod config
-│   └── test/
-│       └── java/              # Unit and integration tests
+├── Hospital_Servlet1/         # Java legacy application
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/          # Java source files
+│   │   │   └── resources/
+│   │   │       ├── application.yml           # Main config
+│   │   │       ├── application-dev.yml       # Dev config
+│   │   │       └── application-prod.yml      # Prod config
+│   │   └── test/
+│   │       └── java/          # Unit and integration tests
+│   └── pom.xml                # Maven build file
+├── pharmacy/                  # .NET legacy application
+│   ├── src/
+│   │   ├── ApplicationCore/   # Domain/business logic
+│   │   ├── Infrastructure/    # Data & identity
+│   │   └── Web/               # ASP.NET Core web app
+│   └── PharmacyNetwork.sln
 ├── .github/
 │   ├── agents/                # Custom Copilot agents
 │   ├── instructions/          # Modernization instructions
-│   └── workflows/             # CI/CD pipelines
+│   └── workflows/             # CI/CD pipelines (sonarqube.yml, sonarqube-dotnet.yml)
 ├── Migration/                 # Migration plans and reports
-├── pom.xml                    # Maven build file
+├── Orchestration/             # Workflow state, SonarQube fix summaries, validation reports
 └── README.md
 ```
 
@@ -172,10 +191,14 @@ Contributions are welcome! To contribute:
 - All SonarQube issues resolved
 - Follow Spring Boot and Java best practices
 - Use Java 17+ features appropriately
+- All agents operate in fully autonomous mode — quality gates (G1–G5) must pass before proceeding
+- Never modify: new features, UI, domain redesign (out of scope)
 
 ## References
 
 - [Spring Boot 3.x Documentation](https://docs.spring.io/spring-boot/docs/current/reference/html/)
 - [Java 17 Documentation](https://docs.oracle.com/en/java/javase/17/)
 - [Spring Data JPA](https://spring.io/projects/spring-data-jpa)
+- [.NET 8 Documentation](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-8/overview)
 - [GitHub Copilot Documentation](https://docs.github.com/en/copilot)
+- [SonarQube Documentation](https://docs.sonarqube.org/latest/)
