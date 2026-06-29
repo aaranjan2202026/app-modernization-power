@@ -1,15 +1,10 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using PharmacyNetwork.ApplicationCore.Entities;
 
 namespace PharmacyNetwork.Infrastructure.Data
 {
     public partial class PharmacyNetworkContext : DbContext
     {
-        private const string ColMedItemId = "med_item_id";
-        private const string ColPharmId = "pharm_id";
-        private const string ColDateTime = "datetime";
-        private const string ColDecimal18_2 = "decimal(18, 2)";
-
         public PharmacyNetworkContext()
         {
         }
@@ -35,6 +30,7 @@ namespace PharmacyNetwork.Infrastructure.Data
             optionsBuilder.UseLazyLoadingProxies();
             if (!optionsBuilder.IsConfigured)
             {
+                //optionsBuilder.UseSqlServer("Data Source=DESKTOP-M3LJRB3;Initial Catalog=PharmacyNetwork;Integrated Security=True");
             }
         }
 
@@ -47,7 +43,7 @@ namespace PharmacyNetwork.Infrastructure.Data
 
                 entity.ToTable("check");
 
-                entity.Property(e => e.MedItemId).HasColumnName(ColMedItemId);
+                entity.Property(e => e.MedItemId).HasColumnName("med_item_id");
 
                 entity.Property(e => e.PurchId).HasColumnName("purch_id");
 
@@ -103,9 +99,9 @@ namespace PharmacyNetwork.Infrastructure.Data
 
                 entity.Property(e => e.IncomeDate)
                     .HasColumnName("income_date")
-                    .HasColumnType(ColDateTime);
+                    .HasColumnType("datetime");
 
-                entity.Property(e => e.PharmId).HasColumnName(ColPharmId);
+                entity.Property(e => e.PharmId).HasColumnName("pharm_id");
 
                 entity.HasOne(d => d.Pharm)
                     .WithMany(p => p.Income)
@@ -121,7 +117,7 @@ namespace PharmacyNetwork.Infrastructure.Data
 
                 entity.ToTable("income_detail");
 
-                entity.Property(e => e.MedItemId).HasColumnName(ColMedItemId);
+                entity.Property(e => e.MedItemId).HasColumnName("med_item_id");
 
                 entity.Property(e => e.IncomeId).HasColumnName("income_id");
 
@@ -129,7 +125,7 @@ namespace PharmacyNetwork.Infrastructure.Data
 
                 entity.Property(e => e.Price)
                     .HasColumnName("price")
-                    .HasColumnType(ColDecimal18_2);
+                    .HasColumnType("decimal(18, 2)");
 
                 entity.HasOne(d => d.Income)
                     .WithMany(p => p.IncomeDetail)
@@ -151,7 +147,7 @@ namespace PharmacyNetwork.Infrastructure.Data
 
                 entity.ToTable("medical_item");
 
-                entity.Property(e => e.MedItemId).HasColumnName(ColMedItemId);
+                entity.Property(e => e.MedItemId).HasColumnName("med_item_id");
 
                 entity.Property(e => e.CategId).HasColumnName("categ_id");
 
@@ -169,11 +165,11 @@ namespace PharmacyNetwork.Infrastructure.Data
 
                 entity.Property(e => e.MedItemPrice)
                     .HasColumnName("med_item_price")
-                    .HasColumnType(ColDecimal18_2);
+                    .HasColumnType("decimal(18, 2)");
 
                 entity.Property(e => e.MedItemPriceMarkup)
                     .HasColumnName("med_item_price_markup")
-                    .HasColumnType(ColDecimal18_2);
+                    .HasColumnType("decimal(18, 2)");
 
                 entity.HasOne(d => d.Categ)
                     .WithMany(p => p.MedicalItem)
@@ -195,7 +191,7 @@ namespace PharmacyNetwork.Infrastructure.Data
 
                 entity.ToTable("pharmacy");
 
-                entity.Property(e => e.PharmId).HasColumnName(ColPharmId);
+                entity.Property(e => e.PharmId).HasColumnName("pharm_id");
 
                 entity.Property(e => e.PharmAddress)
                     .IsRequired()
@@ -217,9 +213,9 @@ namespace PharmacyNetwork.Infrastructure.Data
 
                 entity.ToTable("pharmacy_wharehouse");
 
-                entity.Property(e => e.PharmId).HasColumnName(ColPharmId);
+                entity.Property(e => e.PharmId).HasColumnName("pharm_id");
 
-                entity.Property(e => e.MedItemId).HasColumnName(ColMedItemId);
+                entity.Property(e => e.MedItemId).HasColumnName("med_item_id");
 
                 entity.Property(e => e.ItemCount).HasColumnName("item_count");
 
@@ -265,15 +261,15 @@ namespace PharmacyNetwork.Infrastructure.Data
 
                 entity.Property(e => e.PurchId).HasColumnName("purch_id");
 
-                entity.Property(e => e.PharmId).HasColumnName(ColPharmId);
+                entity.Property(e => e.PharmId).HasColumnName("pharm_id");
 
                 entity.Property(e => e.PurchAmount)
                     .HasColumnName("purch_amount")
-                    .HasColumnType(ColDecimal18_2);
+                    .HasColumnType("decimal(18, 2)");
 
                 entity.Property(e => e.PurchDate)
                     .HasColumnName("purch_date")
-                    .HasColumnType(ColDateTime);
+                    .HasColumnType("datetime");
 
                 entity.Property(e => e.PurchDiscountPercent)
                     .HasColumnName("purch_discount_percent")
@@ -299,15 +295,15 @@ namespace PharmacyNetwork.Infrastructure.Data
 
                 entity.Property(e => e.DateFinish)
                     .HasColumnName("date_finish")
-                    .HasColumnType(ColDateTime);
+                    .HasColumnType("datetime");
 
                 entity.Property(e => e.DateStart)
                     .HasColumnName("date_start")
-                    .HasColumnType(ColDateTime);
+                    .HasColumnType("datetime");
 
-                entity.Property(e => e.MedItemId).HasColumnName(ColMedItemId);
+                entity.Property(e => e.MedItemId).HasColumnName("med_item_id");
 
-                entity.Property(e => e.PharmId).HasColumnName(ColPharmId);
+                entity.Property(e => e.PharmId).HasColumnName("pharm_id");
 
                 entity.Property(e => e.Telephone)
                     .IsRequired()

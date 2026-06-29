@@ -17,11 +17,12 @@ public class AppointmentDao {
     public boolean addAppointment(Appointment a) {
         boolean f = false;
 
-        String sql = "INSERT INTO Appointment " +
-                "(userId, fullName, gender, age, appoinDate, email, phNo, diseases, doctorId, address, [status]) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try {
+            String sql = "INSERT INTO Appointment " +
+                    "(userId, fullName, gender, age, appoinDate, email, phNo, diseases, doctorId, address, [status]) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, a.getUserId());
             ps.setString(2, a.getFullName());
             ps.setString(3, a.getGender());
@@ -52,16 +53,17 @@ public class AppointmentDao {
     // ---------------- Get Appointments by User ----------------
     public List<Appointment> getAllAppointmentByLoginUser(int userId) {
         List<Appointment> list = new ArrayList<>();
-        String sql = "SELECT * FROM Appointment WHERE userId=?";
+        Appointment ap = null;
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try {
+            String sql = "SELECT * FROM Appointment WHERE userId=?";
+            PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, userId);
 
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    Appointment ap = extractAppointment(rs);
-                    list.add(ap);
-                }
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                ap = extractAppointment(rs);
+                list.add(ap);
             }
 
         } catch (Exception e) {
@@ -74,16 +76,17 @@ public class AppointmentDao {
     // ---------------- Get Appointments by Doctor ----------------
     public List<Appointment> getAllAppointmentByDoctorLogin(int doctorId) {
         List<Appointment> list = new ArrayList<>();
-        String sql = "SELECT * FROM Appointment WHERE doctorId=?";
+        Appointment ap = null;
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try {
+            String sql = "SELECT * FROM Appointment WHERE doctorId=?";
+            PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, doctorId);
 
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    Appointment ap = extractAppointment(rs);
-                    list.add(ap);
-                }
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                ap = extractAppointment(rs);
+                list.add(ap);
             }
 
         } catch (Exception e) {
@@ -96,15 +99,15 @@ public class AppointmentDao {
     // ---------------- Get Appointment by ID ----------------
     public Appointment getAppointmentById(int id) {
         Appointment ap = null;
-        String sql = "SELECT * FROM Appointment WHERE id=?";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try {
+            String sql = "SELECT * FROM Appointment WHERE id=?";
+            PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, id);
 
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    ap = extractAppointment(rs);
-                }
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                ap = extractAppointment(rs);
             }
 
         } catch (Exception e) {
@@ -117,9 +120,9 @@ public class AppointmentDao {
     // ---------------- Update Status/Comment ----------------
     public boolean updateCommentStatus(int id, int doctorId, String comm) {
         boolean f = false;
-        String sql = "UPDATE Appointment SET [status]=? WHERE id=? AND doctorId=?";
-
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try {
+            String sql = "UPDATE Appointment SET [status]=? WHERE id=? AND doctorId=?";
+            PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, comm);
             ps.setInt(2, id);
             ps.setInt(3, doctorId);
@@ -139,13 +142,15 @@ public class AppointmentDao {
     // ---------------- Get All Appointments ----------------
     public List<Appointment> getAllAppointment() {
         List<Appointment> list = new ArrayList<>();
-        String sql = "SELECT * FROM Appointment ORDER BY id DESC";
+        Appointment ap = null;
 
-        try (PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try {
+            String sql = "SELECT * FROM Appointment ORDER BY id DESC";
+            PreparedStatement ps = con.prepareStatement(sql);
 
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                Appointment ap = extractAppointment(rs);
+                ap = extractAppointment(rs);
                 list.add(ap);
             }
 

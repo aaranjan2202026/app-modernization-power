@@ -18,12 +18,10 @@ public class DoctorDao {
     public boolean registerDoctor(Doctor d) {
         boolean f = false;
 
-        String sql = "INSERT INTO Doctor (fullName, dob, qualification, specialist, email, mobNo, password) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-        try (Connection con = ConnectionHelper.getConObj();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
+        try (Connection con = ConnectionHelper.getConObj()) {
+            String sql = "INSERT INTO Doctor (fullName, dob, qualification, specialist, email, mobNo, password) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, d.getFullName());
 
             // dob is DATE in MSSQL, so convert String -> java.sql.Date
@@ -49,14 +47,14 @@ public class DoctorDao {
     // ---------------- Get All Doctors ----------------
     public List<Doctor> getAllDoctors() {
         List<Doctor> list = new ArrayList<>();
-        String sql = "SELECT * FROM Doctor ORDER BY id DESC";
-
-        try (Connection con = ConnectionHelper.getConObj();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        Doctor d = null;
+        try (Connection con = ConnectionHelper.getConObj()) {
+            String sql = "SELECT * FROM Doctor ORDER BY id DESC";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                Doctor d = extractDoctor(rs);
+                d = extractDoctor(rs);
                 list.add(d);
             }
         } catch (Exception e) {
@@ -69,17 +67,14 @@ public class DoctorDao {
     // ---------------- Get Doctor by ID ----------------
     public Doctor getDoctorsById(int id) {
         Doctor d = null;
-        String sql = "SELECT * FROM Doctor WHERE id=?";
-
-        try (Connection con = ConnectionHelper.getConObj();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
+        try (Connection con = ConnectionHelper.getConObj()) {
+            String sql = "SELECT * FROM Doctor WHERE id=?";
+            PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
 
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    d = extractDoctor(rs);
-                }
+            if (rs.next()) {
+                d = extractDoctor(rs);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -91,11 +86,10 @@ public class DoctorDao {
     // ---------------- Update Doctor ----------------
     public boolean updateDoctor(Doctor d) {
         boolean f = false;
-        String sql = "UPDATE Doctor SET fullName=?, dob=?, qualification=?, specialist=?, email=?, mobNo=?, password=? WHERE id=?";
 
-        try (Connection con = ConnectionHelper.getConObj();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
+        try (Connection con = ConnectionHelper.getConObj()) {
+            String sql = "UPDATE Doctor SET fullName=?, dob=?, qualification=?, specialist=?, email=?, mobNo=?, password=? WHERE id=?";
+            PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, d.getFullName());
             ps.setDate(2, java.sql.Date.valueOf(d.getDob()));
             ps.setString(3, d.getQualification());
@@ -119,11 +113,10 @@ public class DoctorDao {
     // ---------------- Delete Doctor ----------------
     public boolean deleteDoctor(int id) {
         boolean f = false;
-        String sql = "DELETE FROM Doctor WHERE id=?";
 
-        try (Connection con = ConnectionHelper.getConObj();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
+        try (Connection con = ConnectionHelper.getConObj()) {
+            String sql = "DELETE FROM Doctor WHERE id=?";
+            PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, id);
             int i = ps.executeUpdate();
             if (i == 1) {
@@ -138,18 +131,17 @@ public class DoctorDao {
     // ---------------- Doctor Login ----------------
     public Doctor login(String email, String password) {
         Doctor d = null;
-        String sql = "SELECT * FROM Doctor WHERE email=? AND password=?";
 
-        try (Connection con = ConnectionHelper.getConObj();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
+        try (Connection con = ConnectionHelper.getConObj()) {
+            String sql = "SELECT * FROM Doctor WHERE email=? AND password=?";
+            PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, email);
             ps.setString(2, password);
 
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    d = extractDoctor(rs);
-                }
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                d = extractDoctor(rs);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -169,17 +161,13 @@ public class DoctorDao {
 
     public int countAppointmentByDocotrId(int did) {
         int i = 0;
-        String sql = "SELECT COUNT(*) FROM Appointment WHERE doctorId=?";
-
-        try (Connection con = ConnectionHelper.getConObj();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
+        try (Connection con = ConnectionHelper.getConObj()) {
+            String sql = "SELECT COUNT(*) FROM Appointment WHERE doctorId=?";
+            PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, did);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    i = rs.getInt(1);
-                }
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                i = rs.getInt(1);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -197,11 +185,9 @@ public class DoctorDao {
 
     private int count(String sql) {
         int i = 0;
-
-        try (Connection con = ConnectionHelper.getConObj();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-
+        try (Connection con = ConnectionHelper.getConObj()) {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 i = rs.getInt(1);
             }
@@ -214,18 +200,16 @@ public class DoctorDao {
     // ---------------- Password Management ----------------
     public boolean checkOldPassword(int userid, String oldPassword) {
         boolean f = false;
-        String sql = "SELECT * FROM Doctor WHERE id=? AND password=?";
 
-        try (Connection con = ConnectionHelper.getConObj();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
+        try (Connection con = ConnectionHelper.getConObj()) {
+            String sql = "SELECT * FROM Doctor WHERE id=? AND password=?";
+            PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, userid);
             ps.setString(2, oldPassword);
 
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    f = true;
-                }
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                f = true;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -236,11 +220,10 @@ public class DoctorDao {
 
     public boolean changePassword(int userid, String newPassword) {
         boolean f = false;
-        String sql = "UPDATE Doctor SET password=? WHERE id=?";
 
-        try (Connection con = ConnectionHelper.getConObj();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
+        try (Connection con = ConnectionHelper.getConObj()) {
+            String sql = "UPDATE Doctor SET password=? WHERE id=?";
+            PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, newPassword);
             ps.setInt(2, userid);
 
@@ -257,11 +240,10 @@ public class DoctorDao {
 
     public boolean editDoctorProfile(Doctor d) {
         boolean f = false;
-        String sql = "UPDATE Doctor SET fullName=?, dob=?, qualification=?, specialist=?, email=?, mobNo=? WHERE id=?";
 
-        try (Connection con = ConnectionHelper.getConObj();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
+        try (Connection con = ConnectionHelper.getConObj()) {
+            String sql = "UPDATE Doctor SET fullName=?, dob=?, qualification=?, specialist=?, email=?, mobNo=? WHERE id=?";
+            PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, d.getFullName());
             ps.setDate(2, java.sql.Date.valueOf(d.getDob()));
             ps.setString(3, d.getQualification());

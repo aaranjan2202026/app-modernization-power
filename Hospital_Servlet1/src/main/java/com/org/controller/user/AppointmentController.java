@@ -13,8 +13,6 @@ import com.org.entity.Appointment;
 @Controller
 public class AppointmentController {
 
-    private static final String ERROR_MSG_ATTR = "errorMsg";
-
     @PostMapping("/appAppointment")
     public String addAppointment(@RequestParam("userid") int userId,
             @RequestParam String fullname,
@@ -37,7 +35,7 @@ public class AppointmentController {
         if (dao.addAppointment(ap)) {
             redirectAttributes.addFlashAttribute("succMsg", "Appointment Successfully");
         } else {
-            redirectAttributes.addFlashAttribute(ERROR_MSG_ATTR, "Something wrong on server");
+            redirectAttributes.addFlashAttribute("errorMsg", "Something wrong on server");
         }
 
         return "redirect:/user_appointment.jsp";
@@ -58,10 +56,10 @@ public class AppointmentController {
             if (updateRes) {
                 redirectAttributes.addFlashAttribute("sucMsg", "Password Change Successfully");
             } else {
-                redirectAttributes.addFlashAttribute(ERROR_MSG_ATTR, "Something Wrong on Server");
+                redirectAttributes.addFlashAttribute("errorMsg", "Something Wrong on Server");
             }
         } else {
-            redirectAttributes.addFlashAttribute(ERROR_MSG_ATTR, "Old Password Incorrect");
+            redirectAttributes.addFlashAttribute("errorMsg", "Old Password Incorrect");
         }
 
         return "redirect:/change_password.jsp";

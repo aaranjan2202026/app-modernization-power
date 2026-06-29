@@ -13,9 +13,6 @@ import com.org.dao.UserDao;
 @WebServlet("/userChangePassword")
 public class ChangePassword extends HttpServlet {
 
-	private static final String ERROR_MSG_ATTR = "errorMsg";
-	private static final String CHANGE_PASSWORD_PAGE = "change_password.jsp";
-
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -30,16 +27,16 @@ public class ChangePassword extends HttpServlet {
 
 			if (dao.changePassword(uid, newPassword)) {
 				session.setAttribute("succMsg", "Password Change Sucessfully");
-				resp.sendRedirect(CHANGE_PASSWORD_PAGE);
+				resp.sendRedirect("change_password.jsp");
 
 			} else {
-				session.setAttribute(ERROR_MSG_ATTR, "Something wrong on server");
-				resp.sendRedirect(CHANGE_PASSWORD_PAGE);
+				session.setAttribute("errorMsg", "Something wrong on server");
+				resp.sendRedirect("change_password.jsp");
 			}
 
 		} else {
-			session.setAttribute(ERROR_MSG_ATTR, "Old Password Incorrect");
-			resp.sendRedirect(CHANGE_PASSWORD_PAGE);
+			session.setAttribute("errorMsg", "Old Password Incorrect");
+			resp.sendRedirect("change_password.jsp");
 		}
 
 	}

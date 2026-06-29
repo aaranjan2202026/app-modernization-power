@@ -16,21 +16,36 @@ sonarqube server = "https://sonarqube-hub.azurewebsites.net"
 
 ## Workflow
 
-All agents **auto-detect** whether the workspace contains a Java project (`pom.xml`/`build.gradle`) or a .NET project (`*.sln`/`*.csproj`) and adjust their commands, branch, and patterns accordingly.
+All agents **auto-detect** whether the workspace contains a Java project (`pom.xml`/`build.gradle`) or a .NET project (`*.sln`/`*.csproj`) and adjust their commands and patterns accordingly.
 
-This workspace uses a 5-phase automated modernization workflow with SonarQube scanning:
+This workspace uses a **local-first** 4-phase workflow. No GitHub Actions triggers, no branch creation, and no remote pushes are required. All changes are applied directly to the working directory.
 
-**Phase 0 — Baseline Scan**:
-- Java: Trigger `.github/workflows/sonarqube.yml`
-- .NET: Trigger `.github/workflows/sonarqube-dotnet.yml`
+1. **Phase 1 — Assess** (`@SonarQubeGenie`):
+   - Connects to the SonarQube server using the project name defined above
+   - Fetches all open issues (bugs, vulnerabilities, code smells) directly from the server — no CI/CD trigger needed
+   - Produces a prioritised issue list before touching any file
 
-1. **Phase 1 — Assess**: `@SonarQubeGenie` fetches and fixes all SonarQube issues
-2. **Phase 2 — Plan**: `@modernization-plan` creates the refactoring task plan
-3. **Phase 3 — Refactor**: `@modernization-developer` executes all tasks
-4. **Phase 4 — Validate**: `@modernization-validator` enforces Gate G4
-5. **Phase 5 — Deploy**: Orchestrator triggers Azure DevOps pipeline
+2. **Phase 2a — SonarQube Fixes** (`@SonarQubeGenie`):
+   - Fixes every fetched SonarQube issue directly inside the project source files (`Hospital_Servlet1/` or `pharmacy/`)
+   - Reports which files were changed and which rule each fix addresses
+   - Example output: _"Fixed S2095 (resource leak) in `DBConnection.java`"_
 
-**Phase 6 — Final Scan**: Re-trigger the appropriate workflow to show before/after metrics
+3. **Phase 2b — Modernization Plan** (`@modernization-plan`):
+   - Analyses the codebase and produces a structured modernization task plan
+   - Covers: async patterns, API upgrades, dependency versions, configuration externalisation, and other improvements
+   - Plan is used by the next phase as the source of tasks to execute
+
+4. **Phase 2c — Modernization** (`@modernization-developer`):
+   - Executes every task from the plan produced in Phase 2b directly inside the project source files
+   - Reports which files were changed and what modernization task each change addresses
+   - Example output: _"Updated `pom.xml` — upgraded Spring Boot from 2.x to 3.x"_
+
+5. **Phase 3 — Validate** (`@modernization-validator`):
+   - Builds the project and runs all tests locally
+   - Confirms that both SonarQube fixes and modernization changes do not break existing behaviour
+   - Quality gates (G1-G4) must pass before completion is reported
+
+> **Branch policy**: Do **not** create or switch branches. All changes stay on the current local branch. If the user explicitly asks to create a branch, do so at that point only.
 
 ## To Run the Full Workflow
 
@@ -51,30 +66,11 @@ This workspace uses a 5-phase automated modernization workflow with SonarQube sc
 @modernization-validator Run full validation
 ```
 
-## Working Branches
-
-- Java projects: `feature/java-modernization`
-- .NET projects: `feature/dotnet-modernization`
-- Branch is auto-selected by agents based on detected project type
-
-## SonarQube Workflow Triggers
-
-**Before Starting (Phase 0)**:
-- Orchestrator automatically checkouts the correct branch based on project type
-- Commits and pushes all agent configuration files to remote
-- **Java**: Trigger `https://github.com/Application-Modernization/cca-app-mod-demo-java-refactor-custom-agents/actions/workflows/sonarqube.yml`
-  - Or run: `gh workflow run sonarqube.yml --ref feature/java-modernization`
-- **.NET**: Trigger `https://github.com/Application-Modernization/cca-app-mod-demo-java-refactor-custom-agents/actions/workflows/sonarqube-dotnet.yml`
-  - Or run: `gh workflow run sonarqube-dotnet.yml --ref feature/dotnet-modernization`
-
-**After Validation (Phase 6)**:
-- `@modernization-validator` triggers the appropriate workflow after all tests pass
-- Compares baseline metrics vs post-refactoring metrics
-- Generates final quality report showing improvements
-
 ## Agent Behavior Rules
 
 - All agents operate in fully autonomous mode — no user confirmation needed between steps
-- Quality gates (G1-G5) must pass before proceeding to next phase
-- All fixes are committed atomically with traceable task IDs
+- SonarQube issues are fetched directly from the server; no CI/CD workflow trigger is required
+- All fixes are applied locally to the project source files on the current branch
+- Do **not** create branches, commit, push, or trigger any remote workflow unless the user explicitly requests it
+- Quality gates (G1-G4) must pass before reporting completion
 - Never modify: new features, UI, domain redesign (out of scope)

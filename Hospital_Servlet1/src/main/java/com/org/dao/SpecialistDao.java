@@ -16,9 +16,9 @@ public class SpecialistDao {
     // Add specialist
     public boolean addSpecialist(String name) {
         boolean f = false;
-        String sql = "INSERT INTO specalist(specialistName) VALUES(?)";
-
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try {
+            String sql = "INSERT INTO specalist(specialistName) VALUES(?)";
+            PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, name);
 
             int i = ps.executeUpdate();
@@ -34,10 +34,10 @@ public class SpecialistDao {
     // Get all specialists
     public List<Specalist> getAllSpecialist() {
         List<Specalist> list = new ArrayList<>();
-        String sql = "SELECT * FROM specalist";
-
-        try (PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try {
+            String sql = "SELECT * FROM specalist";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
                 Specalist s = new Specalist();

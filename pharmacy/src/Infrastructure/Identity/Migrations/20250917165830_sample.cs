@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace PharmacyNetwork.Infrastructure.Identity.Migrations
 {
@@ -11,7 +11,7 @@ namespace PharmacyNetwork.Infrastructure.Identity.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            // This migration has no rollback action (intentionally empty).
+
         }
     }
 }

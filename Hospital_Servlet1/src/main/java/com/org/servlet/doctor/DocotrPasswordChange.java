@@ -13,10 +13,6 @@ import com.org.dao.DoctorDao;
 
 @WebServlet("/doctChangePassword")
 public class DocotrPasswordChange extends HttpServlet {
-
-	private static final String ERROR_MSG_ATTR = "errorMsg";
-	private static final String EDIT_PROFILE_PAGE = "doctor/edit_profile.jsp";
-
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -31,16 +27,16 @@ public class DocotrPasswordChange extends HttpServlet {
 
 			if (dao.changePassword(uid, newPassword)) {
 				session.setAttribute("succMsg", "Password Change Sucessfully");
-				resp.sendRedirect(EDIT_PROFILE_PAGE);
+				resp.sendRedirect("doctor/edit_profile.jsp");
 
 			} else {
-				session.setAttribute(ERROR_MSG_ATTR, "Something wrong on server");
-				resp.sendRedirect(EDIT_PROFILE_PAGE);
+				session.setAttribute("errorMsg", "Something wrong on server");
+				resp.sendRedirect("doctor/edit_profile.jsp");
 			}
 
 		} else {
-			session.setAttribute(ERROR_MSG_ATTR, "Old Password Incorrect");
-			resp.sendRedirect(EDIT_PROFILE_PAGE);
+			session.setAttribute("errorMsg", "Old Password Incorrect");
+			resp.sendRedirect("doctor/edit_profile.jsp");
 		}
 
 	}

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,8 +9,6 @@ namespace PharmacyNetwork.Infrastructure.Data
 {
     public class SpecificationEvaluator<T> where T : class
     {
-        private SpecificationEvaluator() { }
-
         public static IQueryable<T> GetQuery(IQueryable<T> inputQuery, ISpecification<T> specification)
         {
             var query = inputQuery;

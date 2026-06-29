@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,7 +25,6 @@ namespace PharmacyNetwork.Web.Areas.Identity.Pages.Account
 
         public void OnGet()
         {
-            // Renders the logout confirmation page; no action required on GET.
         }
 
         public async Task<IActionResult> OnPost(string returnUrl = null)

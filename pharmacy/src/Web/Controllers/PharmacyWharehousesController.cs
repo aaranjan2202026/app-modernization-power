@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -17,10 +17,12 @@ namespace PharmacyNetwork.Web.Controllers
 {
     public class PharmacyWharehousesController : Controller
     {
+        private readonly IAsyncRepository<PharmacyWharehouse> _repository;
         private readonly IMediator _mediator;
 
-        public PharmacyWharehousesController(IMediator mediator)
+        public PharmacyWharehousesController(IAsyncRepository<PharmacyWharehouse> repository, IMediator mediator)
         {
+            _repository = repository;
             _mediator = mediator;
         }
 

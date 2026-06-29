@@ -14,12 +14,6 @@ import com.org.entity.Doctor;
 @Controller
 public class DoctorController {
 
-    private static final String DOCTOR_SESSION_ATTR = "doctObj";
-    private static final String ERROR_MSG_ATTR = "errorMsg";
-    private static final String SUCCESS_MSG_ATTR = "sucMsg";
-    private static final String SERVER_ERROR_MSG = "Something Wrong on Server";
-    private static final String DOCTOR_EDIT_PROFILE_REDIRECT = "redirect:/doctor/edit_profile.jsp";
-
     @PostMapping("/doctorLogin")
     public String doctorLogin(@RequestParam String email,
             @RequestParam String password,
@@ -30,18 +24,18 @@ public class DoctorController {
         Doctor d = dao.login(email, password);
 
         if (d != null) {
-            session.setAttribute(DOCTOR_SESSION_ATTR, d);
+            session.setAttribute("doctObj", d);
             return "redirect:/doctor/index.jsp";
         } else {
-            redirectAttributes.addFlashAttribute(ERROR_MSG_ATTR, "invalid email or password");
+            redirectAttributes.addFlashAttribute("errorMsg", "invalid email or password");
             return "redirect:/doctor_login.jsp";
         }
     }
 
     @RequestMapping(value = "/doctorLogout", method = { RequestMethod.GET, RequestMethod.POST })
     public String doctorLogout(HttpSession session, RedirectAttributes redirectAttributes) {
-        session.removeAttribute(DOCTOR_SESSION_ATTR);
-        redirectAttributes.addFlashAttribute(SUCCESS_MSG_ATTR, "Doctor Logout Successfully");
+        session.removeAttribute("doctObj");
+        redirectAttributes.addFlashAttribute("sucMsg", "Doctor Logout Successfully");
         return "redirect:/doctor_login.jsp";
     }
 
@@ -62,13 +56,13 @@ public class DoctorController {
 
         if (res) {
             Doctor updateDoctor = dao.getDoctorsById(id);
-            session.setAttribute(DOCTOR_SESSION_ATTR, updateDoctor);
-            redirectAttributes.addFlashAttribute(SUCCESS_MSG_ATTR, "Doctor Details Update Successfully");
+            session.setAttribute("doctObj", updateDoctor);
+            redirectAttributes.addFlashAttribute("sucMsg", "Doctor Details Update Successfully");
         } else {
-            redirectAttributes.addFlashAttribute(ERROR_MSG_ATTR, SERVER_ERROR_MSG);
+            redirectAttributes.addFlashAttribute("errorMsg", "Something Wrong on Server");
         }
 
-        return DOCTOR_EDIT_PROFILE_REDIRECT;
+        return "redirect:/doctor/edit_profile.jsp";
     }
 
     @PostMapping("/doctorChangePassword")
@@ -84,15 +78,15 @@ public class DoctorController {
         if (res) {
             boolean updateRes = dao.changePassword(uid, newPassword);
             if (updateRes) {
-                redirectAttributes.addFlashAttribute(SUCCESS_MSG_ATTR, "Password Change Successfully");
+                redirectAttributes.addFlashAttribute("sucMsg", "Password Change Successfully");
             } else {
-                redirectAttributes.addFlashAttribute(ERROR_MSG_ATTR, SERVER_ERROR_MSG);
+                redirectAttributes.addFlashAttribute("errorMsg", "Something Wrong on Server");
             }
         } else {
-            redirectAttributes.addFlashAttribute(ERROR_MSG_ATTR, "Old Password Incorrect");
+            redirectAttributes.addFlashAttribute("errorMsg", "Old Password Incorrect");
         }
 
-        return DOCTOR_EDIT_PROFILE_REDIRECT;
+        return "redirect:/doctor/edit_profile.jsp";
     }
 
     @PostMapping("/doctChangePassword")
@@ -110,13 +104,13 @@ public class DoctorController {
             if (updateRes) {
                 redirectAttributes.addFlashAttribute("succMsg", "Password Change Successfully");
             } else {
-                redirectAttributes.addFlashAttribute(ERROR_MSG_ATTR, SERVER_ERROR_MSG);
+                redirectAttributes.addFlashAttribute("errorMsg", "Something Wrong on Server");
             }
         } else {
-            redirectAttributes.addFlashAttribute(ERROR_MSG_ATTR, "Old Password Incorrect");
+            redirectAttributes.addFlashAttribute("errorMsg", "Old Password Incorrect");
         }
 
-        return DOCTOR_EDIT_PROFILE_REDIRECT;
+        return "redirect:/doctor/edit_profile.jsp";
     }
 
     @PostMapping("/updateStatus")
@@ -131,7 +125,7 @@ public class DoctorController {
         if (dao.updateCommentStatus(id, did, comm)) {
             redirectAttributes.addFlashAttribute("succMsg", "Comment Updated");
         } else {
-            redirectAttributes.addFlashAttribute(ERROR_MSG_ATTR, "Something wrong on server");
+            redirectAttributes.addFlashAttribute("errorMsg", "Something wrong on server");
         }
 
         return "redirect:/doctor/patient.jsp";

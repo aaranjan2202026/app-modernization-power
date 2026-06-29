@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,17 +31,16 @@ namespace PharmacyNetwork.Web.Controllers
         // GET: Pharmacies
         public async Task<IActionResult> Index()
         {
-            var pharmacy = await _repository.GetAllAsync(HttpContext.RequestAborted);
+            var pharmacy = await _repository.GetAllAsync();
             return View(pharmacy);
         }
 
         // GET: Pharmacies/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
             if (id == null) return NotFound();
 
-            var pharmacy = await _repository.GetByIdAsync(id, HttpContext.RequestAborted);
+            var pharmacy = await _repository.GetByIdAsync(id);
             if (pharmacy == null) return NotFound();
 
             var viewModel = new PharmacyViewModel()
@@ -65,7 +64,7 @@ namespace PharmacyNetwork.Web.Controllers
         {
             if (!ModelState.IsValid) return View(pharmacy);
 
-            await _repository.AddAsync(pharmacy, HttpContext.RequestAborted);
+            await _repository.AddAsync(pharmacy);
             return RedirectToAction(nameof(Index));
         }
 
@@ -73,10 +72,9 @@ namespace PharmacyNetwork.Web.Controllers
         [Authorize(Roles = AuthorizationConstants.Roles.ADMINSTRATORS)]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
             if (id == null) return NotFound();
 
-            var pharmacy = await _repository.GetByIdAsync(id, HttpContext.RequestAborted);
+            var pharmacy = await _repository.GetByIdAsync(id);
             if (pharmacy == null) return NotFound();
             return View(pharmacy);
         }
@@ -87,34 +85,35 @@ namespace PharmacyNetwork.Web.Controllers
         [Authorize(Roles = AuthorizationConstants.Roles.ADMINSTRATORS)]
         public async Task<IActionResult> Edit(Pharmacy pharmacy)
         {
-            if (!ModelState.IsValid) return View(pharmacy);
-
-            try
+            if (ModelState.IsValid)
             {
-                await _repository.UpdateAsync(pharmacy, HttpContext.RequestAborted);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PharmacyExists(pharmacy.PharmId))
+                try
                 {
-                    return NotFound();
+                    await _repository.UpdateAsync(pharmacy);
                 }
-                else
+                catch (DbUpdateConcurrencyException)
                 {
-                    throw;
+                    if (!PharmacyExists(pharmacy.PharmId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
+                return RedirectToAction(nameof(Index));
             }
-            return RedirectToAction(nameof(Index));
+            return View(pharmacy);
         }
 
         // GET: Pharmacies/Delete/5
         [Authorize(Roles = AuthorizationConstants.Roles.ADMINSTRATORS)]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
             if (id == null) return NotFound();
 
-            var pharmacy = await _repository.GetByIdAsync(id, HttpContext.RequestAborted);
+            var pharmacy = await _repository.GetByIdAsync(id);
             if (pharmacy == null) return NotFound();
 
             return View(pharmacy);
@@ -126,13 +125,12 @@ namespace PharmacyNetwork.Web.Controllers
         [Authorize(Roles = AuthorizationConstants.Roles.ADMINSTRATORS)]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-            var pharmacy = await _repository.GetByIdAsync(id, HttpContext.RequestAborted);
+            var pharmacy = await _repository.GetByIdAsync(id);
             if (pharmacy == null) return NotFound();
 
             try
             {
-                await _repository.DeleteAsync(pharmacy, HttpContext.RequestAborted);
+                await _repository.DeleteAsync(pharmacy);
                 return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateException)
@@ -163,8 +161,7 @@ namespace PharmacyNetwork.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConfirmTransfer(TransferViewModel transferViewModel)
         {
-            if (!ModelState.IsValid) return View("Transfer", transferViewModel);
-            if (!transferViewModel.TransferItemCount.HasValue || transferViewModel.TransferItemCount <= 0)
+            if (transferViewModel.TransferItemCount <= 0)
             {
                 ModelState.AddModelError(nameof(transferViewModel.TransferItemCount), "Quantity must be greater than zero.");
                 return View("Transfer", transferViewModel);
@@ -177,9 +174,9 @@ namespace PharmacyNetwork.Web.Controllers
             }
 
             var srcPharmId = transferViewModel.Pharmacy.PharmId;
-            var dstPharmId = transferViewModel.TransferPharmId ?? 0;
+            var dstPharmId = transferViewModel.TransferPharmId;
             var medItemId = transferViewModel.MedicalItem.MedItemId;
-            var qty = transferViewModel.TransferItemCount!.Value;
+            var qty = transferViewModel.TransferItemCount;
 
             var query = $@"BEGIN TRANSACTION;
 DECLARE @srcPharmId INT = {srcPharmId}, @dstPharmId INT = {dstPharmId}, @medItemId INT = {medItemId}, @qty INT = {qty};
@@ -206,7 +203,7 @@ END
 
 COMMIT TRANSACTION;";
 
-            await _repository.ExecuteSqlRawAsync(query, HttpContext.RequestAborted);
+            await _repository.ExecuteSqlRawAsync(query);
 
             return RedirectToAction("Details", new {id = transferViewModel.Pharmacy.PharmId});
         }

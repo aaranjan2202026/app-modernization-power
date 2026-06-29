@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
@@ -32,12 +32,12 @@ namespace PharmacyNetwork.ApplicationCore.Specifications
 
         public bool IsPagingEnabled { get; private set; } = false;
 
-        protected void AddInclude(Expression<Func<T, object>> includeExpression)
+        protected virtual void AddInclude(Expression<Func<T, object>> includeExpression)
         {
             Includes.Add(includeExpression);
         }
 
-        protected void AddInclude(string includeString)
+        protected virtual void AddInclude(string includeString)
         {
             IncludeStrings.Add(includeString);
         }
@@ -48,25 +48,25 @@ namespace PharmacyNetwork.ApplicationCore.Specifications
             IncludeStrings.AddRange(includeQuery.Paths);
         }
 
-        protected void ApplyPaging(int skip, int take)
+        protected virtual void ApplyPaging(int skip, int take)
         {
             Skip = skip;
             Take = take;
             IsPagingEnabled = true;
         }
 
-        protected void ApplyOrderBy(Expression<Func<T, object>> orderByExpression)
+        protected virtual void ApplyOrderBy(Expression<Func<T, object>> orderByExpression)
         {
             OrderBy = orderByExpression;
         }
 
-        protected void ApplyOrderByDescending(Expression<Func<T, object>> orderByDescendingExpression)
+        protected virtual void ApplyOrderByDescending(Expression<Func<T, object>> orderByDescendingExpression)
         {
             OrderByDescending = orderByDescendingExpression;
         }
 
         //Not used anywhere at the moment, but someone requested an example of setting this up.
-        protected void ApplyGroupBy(Expression<Func<T, object>> groupByExpression)
+        protected virtual void ApplyGroupBy(Expression<Func<T, object>> groupByExpression)
         {
             GroupBy = groupByExpression;
         }

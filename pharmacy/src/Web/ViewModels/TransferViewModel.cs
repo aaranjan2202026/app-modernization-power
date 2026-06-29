@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,10 +15,10 @@ namespace PharmacyNetwork.Web.ViewModels
 
         public IEnumerable<SelectListItem> Pharmacies { get; set; }
 
-        public int? MaxItemCount { get; set; }
+        public int MaxItemCount { get; set; }
 
-        public int? TransferItemCount { get; set; }
+        public int TransferItemCount { get; set; }
 
-        public int? TransferPharmId { get; set; }
+        public int TransferPharmId { get; set; }
     }
 }

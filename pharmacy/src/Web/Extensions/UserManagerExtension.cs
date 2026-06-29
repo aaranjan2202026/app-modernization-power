@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -12,7 +12,10 @@ namespace PharmacyNetwork.Web.Extensions
     {
         public static async Task<int?> GetPharmacyId(this UserManager<ApplicationUser> userManager, ClaimsPrincipal principal)
         {
-            ArgumentNullException.ThrowIfNull(principal);
+            if (principal == null)
+            {
+                throw new ArgumentNullException(nameof(principal));
+            }
 
             var user = await userManager.GetUserAsync(principal);
             var pharmId = user.PharmacyId;

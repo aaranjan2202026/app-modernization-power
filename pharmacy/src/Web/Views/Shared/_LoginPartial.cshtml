@@ -1,4 +1,4 @@
-@using Microsoft.AspNetCore.Identity
+﻿@using Microsoft.AspNetCore.Identity
 @using PharmacyNetwork.ApplicationCore.Constants
 @using PharmacyNetwork.Infrastructure.Identity
 @inject SignInManager<ApplicationUser> SignInManager
@@ -8,9 +8,9 @@
     @if (SignInManager.IsSignedIn(User))
     {
         <li class="nav-item dropdown">
-            <button class="nav-link dropdown-toggle btn btn-link" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Orders
-            </button>
+            </a>
 
             @if (User.IsInRole(AuthorizationConstants.Roles.USERS))
             {
@@ -30,10 +30,10 @@
         
 
         <li class="nav-item dropdown">
-            <button class="nav-link dropdown-toggle btn btn-link" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <img src="~/img/profile_icon.png" width="30" height="30" class="d-inline-block align-top" alt="" />
                 Profile
-            </button>
+            </a>
             <div class="dropdown-menu dropdown-menu-right">
                 <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Profile</a>
                 <div class="dropdown-divider"></div>

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,7 +26,7 @@ namespace PharmacyNetwork.Web.Controllers
         // GET: ProductCategories
         public async Task<IActionResult> Index()
         {
-            var productCategories= await _repository.GetAllAsync(HttpContext.RequestAborted);
+            var productCategories= await _repository.GetAllAsync();
             return View(productCategories);
         }
 
@@ -42,7 +42,7 @@ namespace PharmacyNetwork.Web.Controllers
         {
             if (!ModelState.IsValid) return View(productCategory);
 
-            await _repository.AddAsync(productCategory, HttpContext.RequestAborted);
+            await _repository.AddAsync(productCategory);
             return RedirectToAction(nameof(Index));
         }
 
@@ -50,10 +50,9 @@ namespace PharmacyNetwork.Web.Controllers
         [Authorize(Roles = AuthorizationConstants.Roles.ADMINSTRATORS)]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
             if (id == null) return NotFound();
 
-            var productCategory = await _repository.GetByIdAsync(id, HttpContext.RequestAborted);
+            var productCategory = await _repository.GetByIdAsync(id);
             if (productCategory == null) return NotFound();
             
             return View(productCategory);
@@ -65,34 +64,35 @@ namespace PharmacyNetwork.Web.Controllers
         [Authorize(Roles = AuthorizationConstants.Roles.ADMINSTRATORS)]
         public async Task<IActionResult> Edit(ProductCategory productCategory)
         {
-            if (!ModelState.IsValid) return View("Edit", productCategory);
-
-            try
+            if (ModelState.IsValid)
             {
-                await _repository.UpdateAsync(productCategory, HttpContext.RequestAborted);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProductCategoryExists(productCategory.CategId))
+                try
                 {
-                    return NotFound();
+                    await _repository.UpdateAsync(productCategory);
                 }
-                else
+                catch (DbUpdateConcurrencyException)
                 {
-                    throw;
+                    if (!ProductCategoryExists(productCategory.CategId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
+                return RedirectToAction(nameof(Index));
             }
-            return RedirectToAction(nameof(Index));
+            return View(productCategory);
         }
 
         // GET: ProductCategories/Delete/5
         [Authorize(Roles = AuthorizationConstants.Roles.ADMINSTRATORS)]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
             if (id == null) return NotFound();
 
-            var productCategory = await _repository.GetByIdAsync(id, HttpContext.RequestAborted);
+            var productCategory = await _repository.GetByIdAsync(id);
             if (productCategory == null) return NotFound();
 
             return View(productCategory);
@@ -104,8 +104,8 @@ namespace PharmacyNetwork.Web.Controllers
         [Authorize(Roles = AuthorizationConstants.Roles.ADMINSTRATORS)]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var productCategory = await _repository.GetByIdAsync(id, HttpContext.RequestAborted);
-            await _repository.DeleteAsync(productCategory, HttpContext.RequestAborted);
+            var productCategory = await _repository.GetByIdAsync(id);
+            await _repository.DeleteAsync(productCategory);
             return RedirectToAction(nameof(Index));
         }
 

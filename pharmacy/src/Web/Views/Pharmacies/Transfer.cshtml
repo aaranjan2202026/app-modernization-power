@@ -1,4 +1,4 @@
-@model PharmacyNetwork.Web.ViewModels.TransferViewModel
+﻿@model PharmacyNetwork.Web.ViewModels.TransferViewModel
 
 @{
     ViewData["Title"] = "Transfer Item Between Pharmacies";
@@ -27,7 +27,7 @@
                 <select asp-for="TransferPharmId" class="form-control" asp-items="@Model.Pharmacies"></select>
             </div>
             <div class="form-group">
-                <label asp-for="TransferItemCount" for="TransferItemCount">Quantity (from 1 to @Model.MaxItemCount) = <output id="count">1</output></label>
+                <label asp-for="TransferItemCount">Quantity (from 1 to @Model.MaxItemCount) = <output id="count">1</output></label>
                 <input type="range" class="form-control-range" asp-for="TransferItemCount" min="1" max="@Model.MaxItemCount" step="1"
                        oninput="fun1()">
             </div>

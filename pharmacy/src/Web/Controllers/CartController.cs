@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,7 +11,6 @@ using PharmacyNetwork.ApplicationCore.Interfaces;
 using PharmacyNetwork.Infrastructure.Data;
 using PharmacyNetwork.Web.Extensions;
 using PharmacyNetwork.Web.Models;           
-using PharmacyNetwork.Web.Services;
 using PharmacyNetwork.Web.ViewModels;
 
 namespace PharmacyNetwork.Web.Controllers
@@ -19,17 +18,11 @@ namespace PharmacyNetwork.Web.Controllers
     [Authorize(Roles = AuthorizationConstants.Roles.USERS)]
     public class CartController : Controller
     {
-        private readonly ICartService _cartService;
-        private readonly IAsyncRepository<Purchase> _purchaseRepository;
-        private readonly IAsyncRepository<Check> _checkRepository;
+        private readonly PharmacyNetworkContext _context;
 
-        public CartController(ICartService cartService,
-            IAsyncRepository<Purchase> purchaseRepository,
-            IAsyncRepository<Check> checkRepository)
+        public CartController(PharmacyNetworkContext context)
         {
-            _cartService = cartService;
-            _purchaseRepository = purchaseRepository;
-            _checkRepository = checkRepository;
+            _context = context;
         }
 
         public IActionResult Index()
@@ -45,12 +38,30 @@ namespace PharmacyNetwork.Web.Controllers
 
             if (!ModelState.IsValid) return View(new ReserveMedItemsViewModel() { Items = cart });
 
-            if (cart == null || cart.Count == 0)
+            if (cart == null || !cart.Any())
             {
                 return RedirectToAction("Index");
             }
 
-            await _cartService.ReserveItemsAsync(cart, viewModel.Telephone, HttpContext.RequestAborted);
+            var reservationStart = DateTime.Now;
+            var reservationEnd = reservationStart.AddHours(24); // 24-hour reservation period
+            
+            foreach (var item in cart)
+            {
+                var reservation = new ReservedMedItem
+                {
+                    DateStart = reservationStart,
+                    DateFinish = reservationEnd,
+                    MedItemId = item.MedicalItemId,
+                    PharmId = item.PharmacyId,
+                    Count = item.Count,
+                    Telephone = viewModel.Telephone
+                };
+
+                _context.ReservedMedItem.Add(reservation);
+            }
+
+            await _context.SaveChangesAsync();
             ClearCart();
 
             return RedirectToAction("Index", "ReservedMedItems"); 
@@ -72,7 +83,7 @@ namespace PharmacyNetwork.Web.Controllers
         {
             var cart = HttpContext.Session.Get<List<CartItem>>("Cart");
 
-            if (cart == null || cart.Count == 0)
+            if (cart == null || !cart.Any())
             {
                 return RedirectToAction("Index");
             }
@@ -82,11 +93,12 @@ namespace PharmacyNetwork.Web.Controllers
             {
                 PharmId = cart[0].PharmacyId,
                 PurchDate = DateTime.Now,
-                PurchAmount = 0,
+                PurchAmount = 0, // Will be calculated later
                 PurchDiscountPercent = 0
             };
 
-            await _purchaseRepository.AddAsync(purchase, HttpContext.RequestAborted);
+            _context.Purchase.Add(purchase);
+            await _context.SaveChangesAsync();
 
             // Add items to check (purchase details)
             decimal totalAmount = 0;
@@ -99,13 +111,13 @@ namespace PharmacyNetwork.Web.Controllers
                     ItemCount = item.Count
                 };
 
-                await _checkRepository.AddAsync(check, HttpContext.RequestAborted);
+                _context.Check.Add(check);
                 totalAmount += item.MedItemPrice * item.Count;
             }
 
             // Update purchase amount
             purchase.PurchAmount = totalAmount;
-            await _purchaseRepository.UpdateAsync(purchase, HttpContext.RequestAborted);
+            await _context.SaveChangesAsync();
 
             ClearCart();
 
@@ -114,7 +126,6 @@ namespace PharmacyNetwork.Web.Controllers
 
         public IActionResult AddToCart(int medItemId, decimal medItemPrice, int pharmId, int count)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
             var cartItem = new CartItem()
             {
                 MedicalItemId = medItemId,
@@ -148,7 +159,6 @@ namespace PharmacyNetwork.Web.Controllers
 
         public IActionResult DeleteFromCart(int id)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
             var cartList = HttpContext.Session.Get<List<CartItem>>("Cart");
             
             cartList.RemoveAll(i => i.MedicalItemId == id);

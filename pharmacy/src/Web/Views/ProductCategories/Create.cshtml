@@ -1,4 +1,4 @@
-@model PharmacyNetwork.ApplicationCore.Entities.ProductCategory
+﻿@model PharmacyNetwork.ApplicationCore.Entities.ProductCategory
 
 @{
     ViewData["Title"] = "Add New Category";
@@ -14,12 +14,12 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="CategName" for="CategName" class="control-label"></label>
+                <label asp-for="CategName" class="control-label"></label>
                 <input asp-for="CategName" class="form-control" />
                 <span asp-validation-for="CategName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CategMarkup" for="CategMarkup" class="control-label"></label>
+                <label asp-for="CategMarkup" class="control-label"></label>
                 <input asp-for="CategMarkup" class="form-control" />
                 <span asp-validation-for="CategMarkup" class="text-danger"></span>
             </div>
