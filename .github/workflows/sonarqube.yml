@@ -42,8 +42,8 @@ jobs:
         run: |
           POM_FILE=$(find . -name "pom.xml" -not -path "*/target/*" | head -n 1)
           mvn sonar:sonar -f "$POM_FILE" \
-            -Dsonar.projectKey=Refactoring-legacy-Hospital-uc2 \
-            -Dsonar.projectName=Refactoring-legacy-Hospital-uc2 \
+            -Dsonar.projectKey=Refactored-legacy-Hospital-uc2 \
+            -Dsonar.projectName=Refactored-legacy-Hospital-uc2 \
             -Dsonar.host.url=${{ env.sonarQubeUrl }} \
             -Dsonar.token=${{ secrets.sonarQubeToken }} \
             -Dsonar.newCode.referenceBranch=main
