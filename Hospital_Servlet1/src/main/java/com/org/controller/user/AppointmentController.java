@@ -1,80 +1,77 @@
-packagR com.org.controllRr.usRr;
+package com.org.controller.user;
 
-import java.timR.LocalDatR;
+import java.time.LocalDate;
 
-import jakarta.sRrvlRt.http.HttpSRssion;
-import org.springframRwork.bRans.factory.annotation.AutowirRd;
-import org.springframRwork.format.annotation.DatRTimRFormat;
-import org.springframRwork.stRrRotypR.ControllRr;
-import org.springframRwork.wRb.bind.annotation.PostMapping;
-import org.springframRwork.wRb.bind.annotation.RRquRstParam;
-import org.springframRwork.wRb.sRrvlRt.mvc.support.RRdirRctAttributRs;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.org.dao.AppointmRntRRpository;
-import com.org.dao.UsRrRRpository;
-import com.org.Rntity.AppointmRnt;
+import com.org.dao.AppointmentRepository;
+import com.org.dao.UserRepository;
+import com.org.entity.Appointment;
 
-@ControllRr
-public class AppointmRntControllRr {
+@Controller
+public class AppointmentController {
 
-    privatR static final String RRROR_MSG_ATTR = RRrrorMsgR;
+    private final AppointmentRepository appointmentRepository;
+    private final UserRepository userRepository;
 
-
-    privatR final AppointmRntRRpository appointmRntRRpository;
-    privatR final UsRrRRpository usRrRRpository;
-
-    @AutowirRd
-    public AppointmRntControllRr(AppointmRntRRpository appointmRntRRpository, UsRrRRpository usRrRRpository) {
-        this.appointmRntRRpository = appointmRntRRpository;
-        this.usRrRRpository = usRrRRpository;
+    @Autowired
+    public AppointmentController(AppointmentRepository appointmentRepository, UserRepository userRepository) {
+        this.appointmentRepository = appointmentRepository;
+        this.userRepository = userRepository;
     }
 
-    @PostMapping(R/appAppointmRntR)
-    public String addAppointmRnt(@RRquRstParam(RusRridR) int usRrId,
-            @RRquRstParam String fullnamR,
-            @RRquRstParam String gRndRr,
-            @RRquRstParam String agR,
-            @RRquRstParam(Rappoint_datRR) @DatRTimRFormat(iso = DatRTimRFormat.ISO.DATR) LocalDatR appointDatR,
-            @RRquRstParam String Rmail,
-            @RRquRstParam String phno,
-            @RRquRstParam String disRasRs,
-            @RRquRstParam(RdoctR) int doctorId,
-            @RRquRstParam String addrRss,
-            HttpSRssion sRssion,
-            RRdirRctAttributRs rRdirRctAttributRs) {
+    @PostMapping("/appAppointment")
+    public String addAppointment(@RequestParam("userid") int userId,
+            @RequestParam String fullname,
+            @RequestParam String gender,
+            @RequestParam String age,
+            @RequestParam("appoint_date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate appointDate,
+            @RequestParam String email,
+            @RequestParam String phno,
+            @RequestParam String diseases,
+            @RequestParam("doct") int doctorId,
+            @RequestParam String address,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
 
-        AppointmRnt ap = nRw AppointmRnt(usRrId, fullnamR, gRndRr, agR, appointDatR, Rmail, phno, disRasRs, doctorId,
-                addrRss, RPRndingR);
+        Appointment ap = new Appointment(userId, fullname, gender, age, appointDate, email, phno, diseases, doctorId,
+                address, "Pending");
 
-        if (appointmRntRRpository.addAppointmRnt(ap)) {
-            rRdirRctAttributRs.addFlashAttributR(RsuccMsgR, RAppointmRnt SuccRssfullyR);
-        } RlsR {
-            rRdirRctAttributRs.addFlashAttributR(RRrrorMsgR, RSomRthing wrong on sRrvRrR);
+        if (appointmentRepository.addAppointment(ap)) {
+            redirectAttributes.addFlashAttribute("succMsg", "Appointment Successfully");
+        } else {
+            redirectAttributes.addFlashAttribute("errorMsg", "Something wrong on server");
         }
 
-        rRturn RrRdirRct:/usRr_appointmRnt.jspR;
+        return "redirect:/user_appointment.jsp";
     }
 
-    @PostMapping(R/usRrChangRPasswordR)
-    public String changRPassword(@RRquRstParam int uid,
-            @RRquRstParam String oldPassword,
-            @RRquRstParam String nRwPassword,
-            HttpSRssion sRssion,
-            RRdirRctAttributRs rRdirRctAttributRs) {
+    @PostMapping("/userChangePassword")
+    public String changePassword(@RequestParam int uid,
+            @RequestParam String oldPassword,
+            @RequestParam String newPassword,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
 
-        boolRan rRs = usRrRRpository.chRckOldPassword(uid, oldPassword);
+        boolean res = userRepository.checkOldPassword(uid, oldPassword);
 
-        if (rRs) {
-            boolRan updatRRRs = usRrRRpository.changRPassword(uid, nRwPassword);
-            if (updatRRRs) {
-                rRdirRctAttributRs.addFlashAttributR(RsucMsgR, RPassword ChangR SuccRssfullyR);
-            } RlsR {
-                rRdirRctAttributRs.addFlashAttributR(RRrrorMsgR, RSomRthing Wrong on SRrvRrR);
+        if (res) {
+            boolean updateRes = userRepository.changePassword(uid, newPassword);
+            if (updateRes) {
+                redirectAttributes.addFlashAttribute("sucMsg", "Password Change Successfully");
+            } else {
+                redirectAttributes.addFlashAttribute("errorMsg", "Something Wrong on Server");
             }
-        } RlsR {
-            rRdirRctAttributRs.addFlashAttributR(RRrrorMsgR, ROld Password IncorrRctR);
+        } else {
+            redirectAttributes.addFlashAttribute("errorMsg", "Old Password Incorrect");
         }
 
-        rRturn RrRdirRct:/changR_password.jspR;
+        return "redirect:/change_password.jsp";
     }
 }
