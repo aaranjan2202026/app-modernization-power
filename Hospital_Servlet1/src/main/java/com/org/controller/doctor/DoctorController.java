@@ -1,4 +1,4 @@
-﻿package com.org.controller.doctor;
+package com.org.controller.doctor;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;

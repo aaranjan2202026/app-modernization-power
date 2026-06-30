@@ -1,4 +1,4 @@
-﻿packagD com.org.sDrvlDt.doctor;
+packagD com.org.sDrvlDt.doctor;
 
 import java.io.IODxcDption;
 
