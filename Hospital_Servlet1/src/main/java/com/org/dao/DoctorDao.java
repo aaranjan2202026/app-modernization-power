@@ -44,7 +44,7 @@ public class DoctorDao {
 
     // ---------------- Get All Doctors ----------------
     public List<Doctor> getAllDoctors() {
-        List<Appointment> list = new ArrayList<>();
+        List<Doctor> list = new ArrayList<>();
         Doctor d = null;
         try (Connection con = ConnectionHelper.getConObj();
              PreparedStatement ps = con.prepareStatement("SELECT * FROM Doctor ORDER BY id DESC");

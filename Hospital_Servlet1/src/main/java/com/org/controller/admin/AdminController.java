@@ -18,8 +18,8 @@ import com.org.entity.User;
 @Controller
 public class AdminController {
 
-    private static final String ERROR_MSG_ATTR = ERROR_MSG_ATTR;
-    private static final String SUCCESS_MSG_ATTR = SUCCESS_MSG_ATTR;
+    private static final String ERROR_MSG_ATTR = "errorMsg";
+    private static final String SUCCESS_MSG_ATTR = "sucMsg";
 
 
     @Value("${admin.email:admin@gmail.com}")

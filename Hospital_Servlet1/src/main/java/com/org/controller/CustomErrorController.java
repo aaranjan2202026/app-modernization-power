@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class CustomErrorController implements ErrorController {
 
-    private static final String ERROR_TITLE_ATTR = ERROR_TITLE_ATTR;
-    private static final String ERROR_MESSAGE_ATTR = ERROR_MESSAGE_ATTR;
+    private static final String ERROR_TITLE_ATTR = "errorTitle";
+    private static final String ERROR_MESSAGE_ATTR = "errorMessage";
 
     @RequestMapping("/error")
     public String handleError(HttpServletRequest request, Model model) {

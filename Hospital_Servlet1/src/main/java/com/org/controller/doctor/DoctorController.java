@@ -16,11 +16,11 @@ import com.org.entity.Doctor;
 @Controller
 public class DoctorController {
 
-    private static final String DOCTOR_OBJ_ATTR = DOCTOR_OBJ_ATTR;
-    private static final String ERROR_MSG_ATTR = ERROR_MSG_ATTR;
-    private static final String SUCCESS_MSG_ATTR = SUCCESS_MSG_ATTR;
-    private static final String SERVER_ERROR_MSG = SERVER_ERROR_MSG;
-    private static final String EDIT_PROFILE_REDIRECT = EDIT_PROFILE_REDIRECT;
+    private static final String DOCTOR_OBJ_ATTR = "doctObj";
+    private static final String ERROR_MSG_ATTR = "errorMsg";
+    private static final String SUCCESS_MSG_ATTR = "sucMsg";
+    private static final String SERVER_ERROR_MSG = "Something Wrong on Server";
+    private static final String EDIT_PROFILE_REDIRECT = "redirect:/doctor/edit_profile.jsp";
 
 
     private final DoctorRepository doctorRepository;
