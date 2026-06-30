@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+import java.time.LocalDate;
+
 import com.org.dao.AppointmentDao;
 import com.org.entity.Appointment;
 
@@ -29,7 +31,7 @@ public class AppointmentServlet extends HttpServlet {
 		int doctor_id = Integer.parseInt(req.getParameter("doct"));
 		String address = req.getParameter("address");
 
-		Appointment ap = new Appointment(userId, fullname, gender, age, appoint_date, email, phno, diseases, doctor_id,
+		Appointment ap = new Appointment(userId, fullname, gender, age, LocalDate.parse(appoint_date), email, phno, diseases, doctor_id,
 				address, "Pending");
 
 		AppointmentDao dao = new AppointmentDao();

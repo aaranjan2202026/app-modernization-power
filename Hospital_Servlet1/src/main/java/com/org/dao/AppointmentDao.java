@@ -169,7 +169,8 @@ public class AppointmentDao {
         ap.setFullName(rs.getString("fullName"));
         ap.setGender(rs.getString("gender"));
         ap.setAge(rs.getString("age"));
-        ap.setAppoinDate(rs.getString("appoinDate")); // store as String (yyyy-MM-dd)
+        java.sql.Date sqlDate = rs.getDate("appoinDate");
+        ap.setAppoinDate(sqlDate != null ? sqlDate.toLocalDate() : null);
         ap.setEmail(rs.getString("email"));
         ap.setPhNo(rs.getString("phNo"));
         ap.setDiseases(rs.getString("diseases"));

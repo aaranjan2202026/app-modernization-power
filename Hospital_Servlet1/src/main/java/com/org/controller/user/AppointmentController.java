@@ -1,5 +1,7 @@
 package com.org.controller.user;
 
+import java.time.LocalDate;
+
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,7 +29,7 @@ public class AppointmentController {
             HttpSession session,
             RedirectAttributes redirectAttributes) {
 
-        Appointment ap = new Appointment(userId, fullname, gender, age, appointDate, email, phno, diseases, doctorId,
+        Appointment ap = new Appointment(userId, fullname, gender, age, LocalDate.parse(appointDate), email, phno, diseases, doctorId,
                 address, "Pending");
 
         AppointmentDao dao = new AppointmentDao();

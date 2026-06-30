@@ -1,4 +1,7 @@
 package com.org.entity;
+
+import java.time.LocalDate;
+
 public class Appointment {
 	
 	private int id;
@@ -6,7 +9,7 @@ public class Appointment {
 	private String fullName;
 	private String gender;
 	private String age;
-	private String appoinDate;
+	private LocalDate appoinDate;
 	private String email;
 	private String phNo;
 	private String diseases;
@@ -14,7 +17,7 @@ public class Appointment {
 	private String address;
 	private String status;
 	
-	public Appointment(int userId, String fullName, String gender, String age, String appoinDate, String email,
+	public Appointment(int userId, String fullName, String gender, String age, LocalDate appoinDate, String email,
 			String phNo, String diseases, int doctorId, String address, String status) {
 		
 		this.userId = userId;
@@ -75,11 +78,11 @@ public class Appointment {
 		this.age = age;
 	}
 
-	public String getAppoinDate() {
+	public LocalDate getAppoinDate() {
 		return appoinDate;
 	}
 
-	public void setAppoinDate(String appoinDate) {
+	public void setAppoinDate(LocalDate appoinDate) {
 		this.appoinDate = appoinDate;
 	}
 
