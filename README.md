@@ -47,7 +47,7 @@ This project demonstrates automated Java and .NET application modernization usin
       Select Agent mode
 
 Agent-Based Workflow Execution
-    This project follows a 6-phase modernization workflow defined in copilot-instructions:
+    This project follows a 4-phase modernization workflow defined in copilot-instructions:
 
 ## FULL AUTOMATED FLOW (Recommended)
  Run one of the following commands:
@@ -61,26 +61,16 @@ Agent-Based Workflow Execution
 
 What it does:
 
-- Automatically executes all phases (Phase 0 → Phase 6)
-- Auto-detects project type (Java or .NET) and selects the correct branch
-- Java branch: `feature/java-modernization` | .NET branch: `feature/dotnet-modernization`
+- Automatically executes all phases (Phase 0 → Phase 4)
+- Auto-detects project type (Java or .NET)
 - Triggers baseline SonarQube scan, runs refactoring end-to-end
-- Commits & pushes changes with traceable task IDs
-- Enforces quality gates (G1–G5) before proceeding to each phase
+- Enforces quality gates (G1–G4) before proceeding to each phase
 
 ## Automated Modernization Workflow
 This project uses custom GitHub Copilot agents to automate the modernization process. All agents **auto-detect** the project type (Java or .NET) and adjust commands, branches, and patterns accordingly.
 
 ### Phase 0: Baseline Scan
 - Configure SonarQube project in `.github/copilot-instructions.md`
-- **Java**: Trigger `.github/workflows/sonarqube.yml`
-  ```bash
-  gh workflow run sonarqube.yml --ref feature/java-modernization
-  ```
-- **.NET**: Trigger `.github/workflows/sonarqube-dotnet.yml`
-  ```bash
-  gh workflow run sonarqube-dotnet.yml --ref feature/dotnet-modernization
-  ```
 
 ### Phase 1: Assessment
 ```bash
@@ -101,12 +91,6 @@ This project uses custom GitHub Copilot agents to automate the modernization pro
 ```bash
 @modernization-validator Run full validation
 ```
-
-### Phase 5: Deploy
-Orchestrator triggers Azure DevOps pipeline automatically.
-
-### Phase 6: Final Scan
-`@modernization-validator` re-triggers the appropriate SonarQube workflow after all tests pass and generates a final quality report comparing baseline vs. post-refactoring metrics.
 
 ### Or run the full workflow:
 ```bash
@@ -175,15 +159,6 @@ gradle jacocoTestReport
 └── README.md
 ```
 
-## Contribute
-
-Contributions are welcome! To contribute:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
 
 ### Code Quality Standards
 
