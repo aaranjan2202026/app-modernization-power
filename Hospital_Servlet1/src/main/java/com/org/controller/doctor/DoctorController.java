@@ -1,6 +1,7 @@
 package com.org.controller.doctor;
 
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,11 +9,21 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.org.dao.DoctorDao;
+import com.org.dao.AppointmentRepository;
+import com.org.dao.DoctorRepository;
 import com.org.entity.Doctor;
 
 @Controller
 public class DoctorController {
+
+    private final DoctorRepository doctorRepository;
+    private final AppointmentRepository appointmentRepository;
+
+    @Autowired
+    public DoctorController(DoctorRepository doctorRepository, AppointmentRepository appointmentRepository) {
+        this.doctorRepository = doctorRepository;
+        this.appointmentRepository = appointmentRepository;
+    }
 
     @PostMapping("/doctorLogin")
     public String doctorLogin(@RequestParam String email,
@@ -20,8 +31,7 @@ public class DoctorController {
             HttpSession session,
             RedirectAttributes redirectAttributes) {
 
-        DoctorDao dao = new DoctorDao();
-        Doctor d = dao.login(email, password);
+        Doctor d = doctorRepository.login(email, password);
 
         if (d != null) {
             session.setAttribute("doctObj", d);
@@ -51,12 +61,11 @@ public class DoctorController {
             RedirectAttributes redirectAttributes) {
 
         Doctor d = new Doctor(id, fullname, dob, qualification, spec, email, mobno, "");
-        DoctorDao dao = new DoctorDao();
-        boolean res = dao.editDoctorProfile(d);
+        boolean res = doctorRepository.editDoctorProfile(d);
 
         if (res) {
-            Doctor updateDoctor = dao.getDoctorsById(id);
-            session.setAttribute("doctObj", updateDoctor);
+            Doctor updatedDoctor = doctorRepository.getDoctorsById(id);
+            session.setAttribute("doctObj", updatedDoctor);
             redirectAttributes.addFlashAttribute("sucMsg", "Doctor Details Update Successfully");
         } else {
             redirectAttributes.addFlashAttribute("errorMsg", "Something Wrong on Server");
@@ -72,11 +81,10 @@ public class DoctorController {
             HttpSession session,
             RedirectAttributes redirectAttributes) {
 
-        DoctorDao dao = new DoctorDao();
-        boolean res = dao.checkOldPassword(uid, oldPassword);
+        boolean res = doctorRepository.checkOldPassword(uid, oldPassword);
 
         if (res) {
-            boolean updateRes = dao.changePassword(uid, newPassword);
+            boolean updateRes = doctorRepository.changePassword(uid, newPassword);
             if (updateRes) {
                 redirectAttributes.addFlashAttribute("sucMsg", "Password Change Successfully");
             } else {
@@ -96,11 +104,10 @@ public class DoctorController {
             HttpSession session,
             RedirectAttributes redirectAttributes) {
 
-        DoctorDao dao = new DoctorDao();
-        boolean res = dao.checkOldPassword(uid, oldPassword);
+        boolean res = doctorRepository.checkOldPassword(uid, oldPassword);
 
         if (res) {
-            boolean updateRes = dao.changePassword(uid, newPassword);
+            boolean updateRes = doctorRepository.changePassword(uid, newPassword);
             if (updateRes) {
                 redirectAttributes.addFlashAttribute("succMsg", "Password Change Successfully");
             } else {
@@ -120,9 +127,7 @@ public class DoctorController {
             HttpSession session,
             RedirectAttributes redirectAttributes) {
 
-        com.org.dao.AppointmentDao dao = new com.org.dao.AppointmentDao();
-
-        if (dao.updateCommentStatus(id, did, comm)) {
+        if (appointmentRepository.updateCommentStatus(id, did, comm)) {
             redirectAttributes.addFlashAttribute("succMsg", "Comment Updated");
         } else {
             redirectAttributes.addFlashAttribute("errorMsg", "Something wrong on server");

@@ -1,6 +1,8 @@
 package com.org.controller.admin;
 
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,14 +10,28 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.org.dao.DoctorDao;
-import com.org.dao.SpecialistDao;
+import com.org.dao.DoctorRepository;
+import com.org.dao.SpecialistRepository;
 import com.org.entity.Doctor;
-import com.org.entity.Specalist;
 import com.org.entity.User;
 
 @Controller
 public class AdminController {
+
+    @Value("${admin.email:admin@gmail.com}")
+    private String adminEmail;
+
+    @Value("${ADMIN_PASSWORD:Ch@ngeMe2024!}")
+    private String adminPassword;
+
+    private final DoctorRepository doctorRepository;
+    private final SpecialistRepository specialistRepository;
+
+    @Autowired
+    public AdminController(DoctorRepository doctorRepository, SpecialistRepository specialistRepository) {
+        this.doctorRepository = doctorRepository;
+        this.specialistRepository = specialistRepository;
+    }
 
     @PostMapping("/adminLogin")
     public String adminLogin(@RequestParam String email,
@@ -23,7 +39,7 @@ public class AdminController {
             HttpSession session,
             RedirectAttributes redirectAttributes) {
 
-        if ("admin@gmail.com".equals(email) && "admin".equals(password)) {
+        if (adminEmail.equals(email) && adminPassword.equals(password)) {
             session.setAttribute("adminObj", new User());
             return "redirect:/admin/index.jsp";
         } else {
@@ -44,8 +60,7 @@ public class AdminController {
             HttpSession session,
             RedirectAttributes redirectAttributes) {
 
-        SpecialistDao dao = new SpecialistDao();
-        boolean res = dao.addSpecialist(specName);
+        boolean res = specialistRepository.addSpecialist(specName);
 
         if (res) {
             redirectAttributes.addFlashAttribute("sucMsg", "Specialist Added Successfully");
@@ -68,8 +83,7 @@ public class AdminController {
             RedirectAttributes redirectAttributes) {
 
         Doctor d = new Doctor(fullname, dob, qualification, spec, email, mobno, password);
-        DoctorDao dao = new DoctorDao();
-        boolean res = dao.registerDoctor(d);
+        boolean res = doctorRepository.registerDoctor(d);
 
         if (res) {
             redirectAttributes.addFlashAttribute("sucMsg", "Doctor Added Successfully");
@@ -93,8 +107,7 @@ public class AdminController {
             RedirectAttributes redirectAttributes) {
 
         Doctor d = new Doctor(id, fullname, dob, qualification, spec, email, mobno, password);
-        DoctorDao dao = new DoctorDao();
-        boolean res = dao.updateDoctor(d);
+        boolean res = doctorRepository.updateDoctor(d);
 
         if (res) {
             redirectAttributes.addFlashAttribute("succMsg", "Doctor Updated Successfully");
@@ -110,8 +123,7 @@ public class AdminController {
             HttpSession session,
             RedirectAttributes redirectAttributes) {
 
-        DoctorDao dao = new DoctorDao();
-        boolean res = dao.deleteDoctor(id);
+        boolean res = doctorRepository.deleteDoctor(id);
 
         if (res) {
             redirectAttributes.addFlashAttribute("succMsg", "Doctor Deleted Successfully");
