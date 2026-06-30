@@ -1,7 +1,7 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+﻿<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <!doctype html>
-<html class="no-js" lang="zxx">
+<html class="no-js" lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -94,7 +94,7 @@
                     <div class="testimonial-caption ">
                         <div class="testimonial-top-cap">
                             <img src="assets/img/gallery/testimonial.png" alt="">
-                            <p>“I am at an age where I just want to be fit and healthy our bodies are our responsibility! So start caring for your body and it will care for you. Eat clean it will care for yout hard.”</p>
+                            <p>â€œI am at an age where I just want to be fit and healthy our bodies are our responsibility! So start caring for your body and it will care for you. Eat clean it will care for yout hard.â€</p>
                         </div>
                         <!-- founder -->
                         <div class="testimonial-founder d-flex align-items-center justify-content-center">
@@ -335,3 +335,4 @@
     
     </body>
 </html>
+

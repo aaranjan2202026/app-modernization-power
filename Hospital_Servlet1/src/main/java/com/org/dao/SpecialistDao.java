@@ -1,4 +1,4 @@
-package com.org.dao;
+﻿package com.org.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,11 +16,10 @@ public class SpecialistDao {
     // Add specialist
     public boolean addSpecialist(String name) {
         boolean f = false;
-        try {
-            String sql = "INSERT INTO specalist(specialistName) VALUES(?)";
-            PreparedStatement ps = con.prepareStatement(sql);
+        String sql = "INSERT INTO specalist(specialistName) VALUES(?)";
+        
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, name);
-
             int i = ps.executeUpdate();
             if (i == 1) {
                 f = true;
@@ -34,10 +33,10 @@ public class SpecialistDao {
     // Get all specialists
     public List<Specalist> getAllSpecialist() {
         List<Specalist> list = new ArrayList<>();
-        try {
-            String sql = "SELECT * FROM specalist";
-            PreparedStatement ps = con.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
+        String sql = "SELECT * FROM specalist";
+        
+        try (PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Specalist s = new Specalist();

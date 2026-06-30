@@ -1,4 +1,4 @@
-
+﻿
 /* 1. Theme default css */
 @import url('https://fonts.googleapis.com/css?family=Muli:300,400,500,600,700,800,900&display=swap');
 body {
@@ -77,7 +77,7 @@ a:hover{
 a:focus,
 a:hover,
 .portfolio-cat a:hover,
-.footer -menu li a:hover {
+.footer-menu li a:hover {
 	text-decoration: none;
 }
 a,
@@ -395,10 +395,8 @@ hr {
 	display: inline-block;
 	font-size: 14px;
 	font-weight: 500;
-	letter-spacing: 1px;
-	margin-bottom: 0;
-	position: relative;
-	transition: color 0.4s linear;
+	letter-spacing: 1px;    position: relative;
+    transition: color 0.4s linear;
 	position: relative;
 	overflow: hidden;
 	margin: 0;
@@ -991,3 +989,4 @@ hr {
     background-repeat: no-repeat;
     background-position: center center;
 }
+

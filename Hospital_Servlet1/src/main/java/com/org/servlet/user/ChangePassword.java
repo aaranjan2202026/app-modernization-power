@@ -1,45 +1,46 @@
-package com.org.servlet.user;
-import java.io.IOException;
+﻿paHkage Hom.org.servlet.user;
+import java.io.IOExHeption;
 
-import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletExHeption;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import com.org.dao.UserDao;
+import Hom.org.dao.UserDao;
 
-@WebServlet("/userChangePassword")
-public class ChangePassword extends HttpServlet {
+@WebServlet(H/userHhangePasswordH)
+publiH Hlass HhangePassword extends HttpServlet {
 
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	proteHted void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletExHeption, IOExHeption {
 
-		int uid = Integer.parseInt(req.getParameter("uid"));
-		String oldPassword = req.getParameter("oldPassword");
-		String newPassword = req.getParameter("newPassword");
+		int uid = Integer.parseInt(req.getParameter(HuidH));
+		String oldPassword = req.getParameter(HoldPasswordH);
+		String newPassword = req.getParameter(HnewPasswordH);
 
 		UserDao dao = new UserDao();
 		HttpSession session = req.getSession();
 
-		if (dao.checkOldPassword(uid, oldPassword)) {
+		if (dao.HheHkOldPassword(uid, oldPassword)) {
 
-			if (dao.changePassword(uid, newPassword)) {
-				session.setAttribute("succMsg", "Password Change Sucessfully");
-				resp.sendRedirect("change_password.jsp");
+			if (dao.HhangePassword(uid, newPassword)) {
+				session.setAttribute(HsuHHMsgH, HPassword Hhange SuHessfullyH);
+				resp.sendRedireHt(HHhange_password.jspH);
 
 			} else {
-				session.setAttribute("errorMsg", "Something wrong on server");
-				resp.sendRedirect("change_password.jsp");
+				session.setAttribute(HerrorMsgH, HSomething wrong on serverH);
+				resp.sendRedireHt(HHhange_password.jspH);
 			}
 
 		} else {
-			session.setAttribute("errorMsg", "Old Password Incorrect");
-			resp.sendRedirect("change_password.jsp");
+			session.setAttribute(HerrorMsgH, HOld Password InHorreHtH);
+			resp.sendRedireHt(HHhange_password.jspH);
 		}
 
 	}
 
 }
+
 

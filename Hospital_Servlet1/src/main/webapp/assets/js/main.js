@@ -1,4 +1,4 @@
-(function ($)
+﻿(function ($)
   { "use strict"
   
 /* 1. Proloder */
@@ -11,7 +11,7 @@
 
 /* 2. sticky And Scroll UP */
     $(window).on('scroll', function () {
-      var scroll = $(window).scrollTop();
+      let scroll = $(window).scrollTop();
       if (scroll < 400) {
         $(".header-sticky").removeClass("sticky-bar");
         $('#back-top').fadeOut(500);
@@ -32,7 +32,7 @@
 
 /* 3. slick Nav */
 // mobile_menu
-    var menu = $('ul#navigation');
+    let menu = $('ul#navigation');
     if(menu.length){
       menu.slicknav({
         prependTo: ".mobile_menu",
@@ -44,13 +44,13 @@
 /* 4. MainSlider-1 */
     // h1-hero-active
     function mainSlider() {
-      var BasicSlider = $('.slider-active');
+      let BasicSlider = $('.slider-active');
       BasicSlider.on('init', function (e, slick) {
-        var $firstAnimatingElements = $('.single-slider:first-child').find('[data-animation]');
+        let $firstAnimatingElements = $('.single-slider:first-child').find('[data-animation]');
         doAnimations($firstAnimatingElements);
       });
       BasicSlider.on('beforeChange', function (e, slick, currentSlide, nextSlide) {
-        var $animatingElements = $('.single-slider[data-slick-index="' + nextSlide + '"]').find('[data-animation]');
+        let $animatingElements = $('.single-slider[data-slick-index="' + nextSlide + '"]').find('[data-animation]');
         doAnimations($animatingElements);
       });
       BasicSlider.slick({
@@ -89,11 +89,11 @@
       });
 
       function doAnimations(elements) {
-        var animationEndEvents = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
+        let animationEndEvents = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
         elements.each(function () {
-          var $this = $(this);
-          var $animationDelay = $this.data('delay');
-          var $animationType = 'animated ' + $this.data('animation');
+          let $this = $(this);
+          let $animationDelay = $this.data('delay');
+          let $animationType = 'animated ' + $this.data('animation');
           $this.css({
             'animation-delay': $animationDelay,
             '-webkit-animation-delay': $animationDelay
@@ -109,7 +109,7 @@
 /* 5. Testimonial Active*/
 
 /* 4. Testimonial Active*/
-    var testimonial = $('.h1-testimonial-active');
+    let testimonial = $('.h1-testimonial-active');
     if(testimonial.length){
     testimonial.slick({
         dots: false,
@@ -156,7 +156,7 @@
 
 
 /* 6. Nice Selectorp  */
-  var nice_Select = $('select');
+  let nice_Select = $('select');
     if(nice_Select.length){
       nice_Select.niceSelect();
     }
@@ -178,7 +178,7 @@
 
 
 // 12 Pop Up Img
-    var popUp = $('.single_gallery_part, .img-pop-up');
+    let popUp = $('.single_gallery_part, .img-pop-up');
       if(popUp.length){
         popUp.magnificPopup({
           type: 'image',
@@ -188,7 +188,7 @@
         });
       }
 // 12 Pop Up Video
-    var popUp = $('.popup-video');
+    let popUp = $('.popup-video');
     if(popUp.length){
       popUp.magnificPopup({
         type: 'iframe'
@@ -204,10 +204,10 @@
         CountDown
     --------------------*/
     // For demo preview
-    var today = new Date();
-    var dd = String(today.getDate()).padStart(2, '0');
-    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-    var yyyy = today.getFullYear();
+    let today = new Date();
+    let dd = String(today.getDate()).padStart(2, '0');
+    let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    let yyyy = today.getFullYear();
     if(mm == 12) {
         mm = '01';
         yyyy = yyyy + 1;
@@ -215,12 +215,12 @@
         mm = parseInt(mm) + 1;
         mm = String(mm).padStart(2, '0');
     }
-    var timerdate = mm + '/' + dd + '/' + yyyy;
+    let timerdate = mm + '/' + dd + '/' + yyyy;
     // For demo preview end
     
 
     // Use this for real timer date
-    /*  var timerdate = "2020/01/01"; */
+    /*  let timerdate = "2020/01/01"; */
 
 	$("#countdown").countdown(timerdate, function(event) {
         $(this).html(event.strftime("<div class='cd-item'><span>%D</span><p>Days</p> </div>" + "<div class='cd-item'><span>%H</span><p>Hrs</p> </div>" + "<div class='cd-item'><span>%M</span><p>Min</p> </div>" + "<div class='cd-item'><span>%S</span><p>Sec</p> </div>"));
@@ -237,3 +237,4 @@
 
 
 })(jQuery);
+

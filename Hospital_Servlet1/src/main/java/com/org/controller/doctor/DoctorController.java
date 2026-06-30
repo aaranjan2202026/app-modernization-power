@@ -1,4 +1,4 @@
-package com.org.controller.doctor;
+﻿package com.org.controller.doctor;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +15,13 @@ import com.org.entity.Doctor;
 
 @Controller
 public class DoctorController {
+
+    private static final String DOCTOR_OBJ_ATTR = DOCTOR_OBJ_ATTR;
+    private static final String ERROR_MSG_ATTR = ERROR_MSG_ATTR;
+    private static final String SUCCESS_MSG_ATTR = SUCCESS_MSG_ATTR;
+    private static final String SERVER_ERROR_MSG = SERVER_ERROR_MSG;
+    private static final String EDIT_PROFILE_REDIRECT = EDIT_PROFILE_REDIRECT;
+
 
     private final DoctorRepository doctorRepository;
     private final AppointmentRepository appointmentRepository;
@@ -34,18 +41,18 @@ public class DoctorController {
         Doctor d = doctorRepository.login(email, password);
 
         if (d != null) {
-            session.setAttribute("doctObj", d);
+            session.setAttribute(DOCTOR_OBJ_ATTR, d);
             return "redirect:/doctor/index.jsp";
         } else {
-            redirectAttributes.addFlashAttribute("errorMsg", "invalid email or password");
+            redirectAttributes.addFlashAttribute(ERROR_MSG_ATTR, "invalid email or password");
             return "redirect:/doctor_login.jsp";
         }
     }
 
     @RequestMapping(value = "/doctorLogout", method = { RequestMethod.GET, RequestMethod.POST })
     public String doctorLogout(HttpSession session, RedirectAttributes redirectAttributes) {
-        session.removeAttribute("doctObj");
-        redirectAttributes.addFlashAttribute("sucMsg", "Doctor Logout Successfully");
+        session.removeAttribute(DOCTOR_OBJ_ATTR);
+        redirectAttributes.addFlashAttribute(SUCCESS_MSG_ATTR, "Doctor Logout Successfully");
         return "redirect:/doctor_login.jsp";
     }
 
@@ -65,13 +72,13 @@ public class DoctorController {
 
         if (res) {
             Doctor updatedDoctor = doctorRepository.getDoctorsById(id);
-            session.setAttribute("doctObj", updatedDoctor);
-            redirectAttributes.addFlashAttribute("sucMsg", "Doctor Details Update Successfully");
+            session.setAttribute(DOCTOR_OBJ_ATTR, updatedDoctor);
+            redirectAttributes.addFlashAttribute(SUCCESS_MSG_ATTR, "Doctor Details Update Successfully");
         } else {
-            redirectAttributes.addFlashAttribute("errorMsg", "Something Wrong on Server");
+            redirectAttributes.addFlashAttribute(ERROR_MSG_ATTR, SERVER_ERROR_MSG);
         }
 
-        return "redirect:/doctor/edit_profile.jsp";
+        return EDIT_PROFILE_REDIRECT;
     }
 
     @PostMapping("/doctorChangePassword")
@@ -86,15 +93,15 @@ public class DoctorController {
         if (res) {
             boolean updateRes = doctorRepository.changePassword(uid, newPassword);
             if (updateRes) {
-                redirectAttributes.addFlashAttribute("sucMsg", "Password Change Successfully");
+                redirectAttributes.addFlashAttribute(SUCCESS_MSG_ATTR, "Password Change Successfully");
             } else {
-                redirectAttributes.addFlashAttribute("errorMsg", "Something Wrong on Server");
+                redirectAttributes.addFlashAttribute(ERROR_MSG_ATTR, SERVER_ERROR_MSG);
             }
         } else {
-            redirectAttributes.addFlashAttribute("errorMsg", "Old Password Incorrect");
+            redirectAttributes.addFlashAttribute(ERROR_MSG_ATTR, "Old Password Incorrect");
         }
 
-        return "redirect:/doctor/edit_profile.jsp";
+        return EDIT_PROFILE_REDIRECT;
     }
 
     @PostMapping("/doctChangePassword")
@@ -111,13 +118,13 @@ public class DoctorController {
             if (updateRes) {
                 redirectAttributes.addFlashAttribute("succMsg", "Password Change Successfully");
             } else {
-                redirectAttributes.addFlashAttribute("errorMsg", "Something Wrong on Server");
+                redirectAttributes.addFlashAttribute(ERROR_MSG_ATTR, SERVER_ERROR_MSG);
             }
         } else {
-            redirectAttributes.addFlashAttribute("errorMsg", "Old Password Incorrect");
+            redirectAttributes.addFlashAttribute(ERROR_MSG_ATTR, "Old Password Incorrect");
         }
 
-        return "redirect:/doctor/edit_profile.jsp";
+        return EDIT_PROFILE_REDIRECT;
     }
 
     @PostMapping("/updateStatus")
@@ -130,7 +137,7 @@ public class DoctorController {
         if (appointmentRepository.updateCommentStatus(id, did, comm)) {
             redirectAttributes.addFlashAttribute("succMsg", "Comment Updated");
         } else {
-            redirectAttributes.addFlashAttribute("errorMsg", "Something wrong on server");
+            redirectAttributes.addFlashAttribute(ERROR_MSG_ATTR, SERVER_ERROR_MSG);
         }
 
         return "redirect:/doctor/patient.jsp";

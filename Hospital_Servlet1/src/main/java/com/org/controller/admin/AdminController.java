@@ -1,4 +1,4 @@
-package com.org.controller.admin;
+﻿package com.org.controller.admin;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +17,10 @@ import com.org.entity.User;
 
 @Controller
 public class AdminController {
+
+    private static final String ERROR_MSG_ATTR = ERROR_MSG_ATTR;
+    private static final String SUCCESS_MSG_ATTR = SUCCESS_MSG_ATTR;
+
 
     @Value("${admin.email:admin@gmail.com}")
     private String adminEmail;
@@ -43,7 +47,7 @@ public class AdminController {
             session.setAttribute("adminObj", new User());
             return "redirect:/admin/index.jsp";
         } else {
-            redirectAttributes.addFlashAttribute("errorMsg", "invalid user or password");
+            redirectAttributes.addFlashAttribute(ERROR_MSG_ATTR, "invalid user or password");
             return "redirect:/admin_login.jsp";
         }
     }
@@ -51,7 +55,7 @@ public class AdminController {
     @RequestMapping(value = "/adminLogout", method = { RequestMethod.GET, RequestMethod.POST })
     public String adminLogout(HttpSession session, RedirectAttributes redirectAttributes) {
         session.removeAttribute("adminObj");
-        redirectAttributes.addFlashAttribute("sucMsg", "Admin Logout Successfully");
+        redirectAttributes.addFlashAttribute(SUCCESS_MSG_ATTR, "Admin Logout Successfully");
         return "redirect:/admin_login.jsp";
     }
 
@@ -63,9 +67,9 @@ public class AdminController {
         boolean res = specialistRepository.addSpecialist(specName);
 
         if (res) {
-            redirectAttributes.addFlashAttribute("sucMsg", "Specialist Added Successfully");
+            redirectAttributes.addFlashAttribute(SUCCESS_MSG_ATTR, "Specialist Added Successfully");
         } else {
-            redirectAttributes.addFlashAttribute("errorMsg", "Something Wrong on Server");
+            redirectAttributes.addFlashAttribute(ERROR_MSG_ATTR, "Something Wrong on Server");
         }
 
         return "redirect:/admin/index.jsp";
@@ -86,9 +90,9 @@ public class AdminController {
         boolean res = doctorRepository.registerDoctor(d);
 
         if (res) {
-            redirectAttributes.addFlashAttribute("sucMsg", "Doctor Added Successfully");
+            redirectAttributes.addFlashAttribute(SUCCESS_MSG_ATTR, "Doctor Added Successfully");
         } else {
-            redirectAttributes.addFlashAttribute("errorMsg", "Something Wrong on Server");
+            redirectAttributes.addFlashAttribute(ERROR_MSG_ATTR, "Something Wrong on Server");
         }
 
         return "redirect:/admin/doctor.jsp";
@@ -112,7 +116,7 @@ public class AdminController {
         if (res) {
             redirectAttributes.addFlashAttribute("succMsg", "Doctor Updated Successfully");
         } else {
-            redirectAttributes.addFlashAttribute("errorMsg", "Something Went Wrong");
+            redirectAttributes.addFlashAttribute(ERROR_MSG_ATTR, "Something Went Wrong");
         }
 
         return "redirect:/admin/view_doctor.jsp";
@@ -128,7 +132,7 @@ public class AdminController {
         if (res) {
             redirectAttributes.addFlashAttribute("succMsg", "Doctor Deleted Successfully");
         } else {
-            redirectAttributes.addFlashAttribute("errorMsg", "Something Went Wrong");
+            redirectAttributes.addFlashAttribute(ERROR_MSG_ATTR, "Something Went Wrong");
         }
 
         return "redirect:/admin/view_doctor.jsp";

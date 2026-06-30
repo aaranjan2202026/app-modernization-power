@@ -1,4 +1,4 @@
-// Sticky Plugin v1.0.4 for jQuery
+﻿// Sticky Plugin v1.0.4 for jQuery
 // =============
 // Author: Anthony Garand
 // Improvements by German M. Bravo (Kronuz) and Ruud Kamphuis (ruudk)
@@ -22,10 +22,10 @@
         factory(jQuery);
     }
 }(function ($) {
-    var slice = Array.prototype.slice; // save ref to original slice()
-    var splice = Array.prototype.splice; // save ref to original slice()
+    let slice = Array.prototype.slice; // save ref to original slice()
+    let splice = Array.prototype.splice; // save ref to original slice()
 
-  var defaults = {
+  let defaults = {
       topSpacing: 0,
       bottomSpacing: 0,
       className: 'is-sticky',
@@ -41,13 +41,13 @@
     sticked = [],
     windowHeight = $window.height(),
     scroller = function() {
-      var scrollTop = $window.scrollTop(),
+      let scrollTop = $window.scrollTop(),
         documentHeight = $document.height(),
         dwh = documentHeight - windowHeight,
         extra = (scrollTop > dwh) ? dwh - scrollTop : 0;
 
-      for (var i = 0, l = sticked.length; i < l; i++) {
-        var s = sticked[i],
+      for (let i = 0, l = sticked.length; i < l; i++) {
+        let s = sticked[i],
           elementTop = s.stickyWrapper.offset().top,
           etse = elementTop - s.topSpacing - extra;
 
@@ -69,7 +69,7 @@
           }
         }
         else {
-          var newTop = documentHeight - s.stickyElement.outerHeight()
+          let newTop = documentHeight - s.stickyElement.outerHeight()
             - s.topSpacing - s.bottomSpacing - scrollTop - extra;
           if (newTop < 0) {
             newTop = newTop + s.topSpacing;
@@ -77,9 +77,9 @@
             newTop = s.topSpacing;
           }
           if (s.currentTop !== newTop) {
-            var newWidth;
+            let newWidth;
             if (s.getWidthFrom) {
-                padding =  s.stickyElement.innerWidth() - s.stickyElement.width();
+                const padding = s.stickyElement.innerWidth() - s.stickyElement.width();
                 newWidth = $(s.getWidthFrom).width() - padding || null;
             } else if (s.widthFromWrapper) {
                 newWidth = s.stickyWrapper.width();
@@ -114,8 +114,8 @@
           }
 
           // Check if sticky has reached end of container and stop sticking
-          var stickyWrapperContainer = s.stickyWrapper.parent();
-          var unstick = (s.stickyElement.offset().top + s.stickyElement.outerHeight() >= stickyWrapperContainer.offset().top + stickyWrapperContainer.outerHeight()) && (s.stickyElement.offset().top <= s.topSpacing);
+          let stickyWrapperContainer = s.stickyWrapper.parent();
+          let unstick = (s.stickyElement.offset().top + s.stickyElement.outerHeight() >= stickyWrapperContainer.offset().top + stickyWrapperContainer.outerHeight()) && (s.stickyElement.offset().top <= s.topSpacing);
 
           if( unstick ) {
             s.stickyElement
@@ -136,9 +136,9 @@
     resizer = function() {
       windowHeight = $window.height();
 
-      for (var i = 0, l = sticked.length; i < l; i++) {
-        var s = sticked[i];
-        var newWidth = null;
+      for (let i = 0, l = sticked.length; i < l; i++) {
+        let s = sticked[i];
+        let newWidth = null;
         if (s.getWidthFrom) {
             if (s.responsiveWidth) {
                 newWidth = $(s.getWidthFrom).width();
@@ -154,12 +154,12 @@
     methods = {
       init: function(options) {
         return this.each(function() {
-          var o = $.extend({}, defaults, options);
-          var stickyElement = $(this);
+          let o = $.extend({}, defaults, options);
+          let stickyElement = $(this);
 
-          var stickyId = stickyElement.attr('id');
-          var wrapperId = stickyId ? stickyId + '-' + defaults.wrapperClassName : defaults.wrapperClassName;
-          var wrapper = $('<div></div>')
+          let stickyId = stickyElement.attr('id');
+          let wrapperId = stickyId ? stickyId + '-' + defaults.wrapperClassName : defaults.wrapperClassName;
+          let wrapper = $('<div></div>')
             .attr('id', wrapperId)
             .addClass(o.wrapperClassName);
 
@@ -169,7 +169,7 @@
             }
 });
 
-          var stickyWrapper = stickyElement.parent();
+          let stickyWrapper = stickyElement.parent();
 
           if (o.center) {
             stickyWrapper.css({width:stickyElement.outerWidth(),marginLeft:"auto",marginRight:"auto"});
@@ -191,8 +191,8 @@
       },
 
       setWrapperHeight: function(stickyElement) {
-        var element = $(stickyElement);
-        var stickyWrapper = element.parent();
+        let element = $(stickyElement);
+        let stickyWrapper = element.parent();
         if (stickyWrapper) {
           stickyWrapper.css('height', element.outerHeight());
         }
@@ -200,7 +200,7 @@
 
       setupChangeListeners: function(stickyElement) {
         if (window.MutationObserver) {
-          var mutationObserver = new window.MutationObserver(function(mutations) {
+          let mutationObserver = new window.MutationObserver(function(mutations) {
             if (mutations[0].addedNodes.length || mutations[0].removedNodes.length) {
               methods.setWrapperHeight(stickyElement);
             }
@@ -227,11 +227,11 @@
       update: scroller,
       unstick: function(options) {
         return this.each(function() {
-          var that = this;
-          var unstickyElement = $(that);
+          let that = this;
+          let unstickyElement = $(that);
 
-          var removeIdx = -1;
-          var i = sticked.length;
+          let removeIdx = -1;
+          let i = sticked.length;
           while (i-- > 0) {
             if (sticked[i].stickyElement.get(0) === that) {
                 splice.call(sticked,i,1);
@@ -286,3 +286,5 @@
     setTimeout(scroller, 0);
   });
 }));
+
+

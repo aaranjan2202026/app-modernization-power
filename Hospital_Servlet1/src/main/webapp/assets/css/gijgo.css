@@ -1,4 +1,4 @@
-.gj-button {
+﻿.gj-button {
     background-color: #f5f5f5;
     border: 1px solid #ddd;
     color: #000;
@@ -898,9 +898,7 @@ table.gj-grid-bootstrap tbody tr td div[data-role="display"] {
     letter-spacing: 0;
     height: 56px;
     font-size: 12px;
-    color: rgba(0,0,0,.54);
-    padding-bottom: 8px;
-    box-sizing: border-box;
+    color: rgba(0,0,0,.54);    box-sizing: border-box;
     padding: 12px 18px;
     text-align: right;
 }
