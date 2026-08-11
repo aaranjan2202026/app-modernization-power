@@ -1,0 +1,13 @@
+{
+  "name": "Migration Write Guard",
+  "version": "1.0.0",
+  "description": "Single consolidated pre-write check covering migration scope and legacy namespace bans",
+  "when": {
+    "type": "preToolUse",
+    "toolTypes": ["write"]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Fast two-part check on this write, then proceed.\n\n1) NAMESPACES. Java files: no javax.servlet, javax.persistence, javax.validation, javax.annotation, javax.inject, javax.ws.rs — use jakarta.* instead. Keep javax.sql, javax.crypto, javax.net (these are Java SE). C# files: no System.Web, System.Configuration, System.Data.Entity — use Microsoft.AspNetCore.*, Microsoft.Extensions.*, Microsoft.EntityFrameworkCore.\n\n2) SCOPE. Allowed: language version upgrade, legacy code removal, service layer extraction, modern language features, configuration externalization, deprecated API replacement, test updates. Not allowed: new features, UI redesign, database schema changes, unrelated refactoring.\n\nIf both pass, write the file. If a namespace violation exists, correct the import and write. If out of scope, skip the write and say why in one line."
+  }
+}

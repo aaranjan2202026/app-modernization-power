@@ -1,0 +1,13 @@
+{
+  "name": "Compile Check on .NET Edit",
+  "version": "1.0.0",
+  "description": "Runs dotnet build when C# or project files are saved during migration",
+  "when": {
+    "type": "fileEdited",
+    "patterns": ["*.cs", "*.csproj"]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "dotnet build --nologo -v q"
+  }
+}

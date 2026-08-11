@@ -1,0 +1,13 @@
+{
+  "name": "Git Safety Guard",
+  "version": "1.0.0",
+  "description": "Blocks accidental git operations — all changes stay on current branch unless user explicitly requests otherwise",
+  "when": {
+    "type": "preToolUse",
+    "toolTypes": ["shell"]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "WORKSPACE POLICY CHECK: If this shell command contains git checkout, git commit, git push, git branch -d, git reset, git rebase, or any branch-creating/switching/pushing/destructive operation, it is BLOCKED unless the user explicitly requested it in their original message. All migration changes must stay on the current local branch with no commits or pushes. Build commands (mvn, dotnet, gradle), test commands, and read-only git commands (git status, git diff, git log) are SAFE to proceed."
+  }
+}

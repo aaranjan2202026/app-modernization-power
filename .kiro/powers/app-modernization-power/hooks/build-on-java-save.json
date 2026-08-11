@@ -1,0 +1,13 @@
+{
+  "name": "Compile Check on Java Edit",
+  "version": "1.0.0",
+  "description": "Runs Maven compilation check when Java files are saved during migration",
+  "when": {
+    "type": "fileEdited",
+    "patterns": ["*.java", "pom.xml"]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "mvn compile -q -f Hospital_Servlet1/pom.xml"
+  }
+}

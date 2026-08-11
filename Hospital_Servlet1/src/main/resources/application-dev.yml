@@ -1,0 +1,19 @@
+# Development profile
+# Supply secrets via environment variables. Never commit real credentials.
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:sqlserver://localhost:1433;database=sqldb-medical-java-demo;encrypt=true;trustServerCertificate=true;loginTimeout=30}
+    username: ${DB_USERNAME:sa}
+    password: ${DB_PASSWORD:}
+
+server:
+  servlet:
+    jsp:
+      init-parameters:
+        development: true
+
+logging:
+  level:
+    com.org: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.jdbc.core: DEBUG

@@ -1,0 +1,34 @@
+{
+  "mcpServers": {
+    "sonarqubemcp": {
+      "url": "https://sonarqube-mcp-server.azurewebsites.net/mcp",
+      "type": "http",
+      "headers": {
+        "SONARQUBE_TOKEN": "REPLACE_WITH_YOUR_TOKEN"
+      },
+      "disabled": false,
+      "_setup": "Replace REPLACE_WITH_YOUR_TOKEN with your SonarQube token, then keep this file OUT of version control. Do not store the token in an environment variable or commit it. Tooling that needs it should prompt at runtime.",
+      "_verified": "sonarqube-mcp-server v1.22.0.3040 - 19 tools. The MCP endpoint is a DIFFERENT host from the SonarQube server itself; pointing url at the SonarQube server returns no tools.",
+      "_security": "autoApprove lists READ-ONLY tools only. change_sonar_issue_status and change_security_hotspot_status mutate shared server state visible to the whole team and are deliberately excluded so they always require explicit confirmation.",
+      "autoApprove": [
+        "search_my_sonarqube_projects",
+        "search_sonar_issues_in_projects",
+        "get_project_quality_gate_status",
+        "get_component_measures",
+        "search_security_hotspots",
+        "show_security_hotspot",
+        "show_rule",
+        "list_quality_gates",
+        "search_metrics",
+        "search_files_by_coverage",
+        "get_file_coverage_details",
+        "get_duplications",
+        "search_duplicated_files",
+        "list_branches",
+        "list_pull_requests",
+        "search_dependency_risks",
+        "analyze_code_snippet"
+      ]
+    }
+  }
+}

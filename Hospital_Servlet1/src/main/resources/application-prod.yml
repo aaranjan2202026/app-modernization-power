@@ -1,0 +1,25 @@
+# Production profile
+# All credentials MUST come from the environment. No defaults.
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: ${DB_POOL_MAX:20}
+      minimum-idle: ${DB_POOL_MIN:5}
+      connection-timeout: 30000
+
+server:
+  servlet:
+    jsp:
+      init-parameters:
+        development: false
+  error:
+    include-stacktrace: never
+    include-message: never
+
+logging:
+  level:
+    com.org: WARN
+    org.springframework: WARN

@@ -1,0 +1,45 @@
+{
+  "track": "JAVA",
+  "module": "Hospital_Servlet1",
+  "sourceVersion": "17",
+  "targetVersion": "21",
+  "started": "2026-08-11T00:00:00Z",
+  "toolchain": {
+    "jdk": "OpenJDK 25.0.1 Temurin",
+    "maven": ".tools/apache-maven-3.9.9/bin/mvn.cmd"
+  },
+  "baseline": {"compile": "success", "tests": "49 passed, 0 failed"},
+  "final": {"compile": "success", "tests": "49 passed, 0 failed", "sourceFiles": "37 -> 18"},
+  "currentPhase": "complete",
+  "phases": {
+    "1": {"name": "Assessment",        "status": "complete", "gate": "pass"},
+    "2": {"name": "Build Config",      "status": "complete", "gate": "pass"},
+    "3": {"name": "Legacy Removal",    "status": "complete", "gate": "pass"},
+    "4": {"name": "Language Features", "status": "complete", "gate": "pass"},
+    "5": {"name": "Configuration",     "status": "complete", "gate": "pass"},
+    "6": {"name": "Testing",           "status": "complete", "gate": "pass"},
+    "7": {"name": "Quality Gate",      "status": "complete", "gate": "indeterminate",
+          "serverReachable": true,
+          "toolsAvailable": 19,
+          "projectKeyVerified": "Refactoring-legacy-Hospital-uc2",
+          "gateStatus": "ERROR",
+          "lastAnalysis": "2026-08-10T08:25:37+0000",
+          "analyzedBranch": "main",
+          "migrationBranch": "feature/hospital-java-modernization",
+          "reason": "Gate ERROR describes main as analyzed 2026-08-10. Migration is uncommitted on an unanalyzed branch, so the gate cannot validate it. Needs a fresh scanner run to resolve.",
+          "staleMeasures": {
+            "coverage": "28.4", "bugs": 113, "vulnerabilities": 30,
+            "code_smells": 261, "duplicated_lines_density": "0.6", "ncloc": 14981
+          },
+          "staleGateConditions": {
+            "new_coverage": "68.9 vs threshold 80 -> ERROR",
+            "new_violations": "292 vs threshold 0 -> ERROR",
+            "new_duplicated_lines_density": "0.55 vs threshold 3 -> OK"
+          }}
+  },
+  "deviations": [
+    "Source was Java 17, not Java 7 as stated in the request",
+    "Service layer skipped - controllers already used constructor injection and were already thin; a pass-through layer would have been churn without benefit",
+    "Entity records skipped - entities are bound by JdbcTemplate RowMapper and require mutable setters"
+  ]
+}

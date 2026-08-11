@@ -1,0 +1,12 @@
+{
+  "name": "Phase Gate Validation",
+  "version": "1.0.0",
+  "description": "Enforces the phase gate and state-file update after a task completes",
+  "when": {
+    "type": "postTaskExecution"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Phase gate check. 1) Run the track build command (Java: mvn clean compile -f Hospital_Servlet1/pom.xml, .NET: dotnet build). 2) If it fails, fix the errors and re-run before doing anything else. 3) Once green, update Migration/.migration-state.json — mark the current phase complete and the next phase in_progress. 4) Continue immediately to the next phase without asking permission."
+  }
+}

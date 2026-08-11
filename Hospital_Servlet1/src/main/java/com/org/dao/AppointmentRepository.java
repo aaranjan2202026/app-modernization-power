@@ -46,9 +46,11 @@ public class AppointmentRepository {
     }
 
     public boolean addAppointment(Appointment a) {
-        String sql = "INSERT INTO Appointment " +
-                "(userId, fullName, gender, age, appoinDate, email, phNo, diseases, doctorId, address, [status]) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = """
+                INSERT INTO Appointment
+                (userId, fullName, gender, age, appoinDate, email, phNo, diseases, doctorId, address, [status])
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """;
         try {
             int res = jdbcTemplate.update(sql,
                     a.getUserId(),
@@ -93,7 +95,7 @@ public class AppointmentRepository {
         String sql = "SELECT " + APPT_COLS + " FROM Appointment WHERE id = ?";
         try {
             List<Appointment> list = jdbcTemplate.query(sql, APPT_ROW_MAPPER, id);
-            return list.isEmpty() ? null : list.get(0);
+            return list.isEmpty() ? null : list.getFirst();
         } catch (Exception e) {
             log.error("Error fetching appointment by id {}: {}", id, e.getMessage(), e);
             return null;

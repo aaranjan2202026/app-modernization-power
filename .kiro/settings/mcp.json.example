@@ -1,0 +1,32 @@
+{
+  "mcpServers": {
+    "sonarqubemcp": {
+      "url": "https://sonarqube-mcp-server.azurewebsites.net/mcp",
+      "type": "http",
+      "headers": {
+        "SONARQUBE_TOKEN": "REPLACE_WITH_YOUR_TOKEN"
+      },
+      "disabled": false,
+      "_comment": "Copy to mcp.json and insert your token. mcp.json is gitignored so the token is never committed. Verified against sonarqube-mcp-server v1.22.0.3040 (19 tools). autoApprove lists READ-ONLY tools only - change_sonar_issue_status and change_security_hotspot_status mutate shared server state and are deliberately excluded.",
+      "autoApprove": [
+        "search_my_sonarqube_projects",
+        "search_sonar_issues_in_projects",
+        "get_project_quality_gate_status",
+        "get_component_measures",
+        "search_security_hotspots",
+        "show_security_hotspot",
+        "show_rule",
+        "list_quality_gates",
+        "search_metrics",
+        "search_files_by_coverage",
+        "get_file_coverage_details",
+        "get_duplications",
+        "search_duplicated_files",
+        "list_branches",
+        "list_pull_requests",
+        "search_dependency_risks",
+        "analyze_code_snippet"
+      ]
+    }
+  }
+}

@@ -59,3 +59,9 @@ TestResults/
 coverage/
 *.coverage
 *.coveragexml
+
+# Workspace-local toolchain (Maven, .NET SDK) - never commit
+.tools/
+
+# Kiro MCP config - contains SonarQube token, never commit
+.kiro/settings/mcp.json

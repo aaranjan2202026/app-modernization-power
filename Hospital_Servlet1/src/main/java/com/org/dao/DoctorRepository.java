@@ -42,8 +42,10 @@ public class DoctorRepository {
     }
 
     public boolean registerDoctor(Doctor d) {
-        String sql = "INSERT INTO Doctor (fullName, dob, qualification, specialist, email, mobNo, password) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = """
+                INSERT INTO Doctor (fullName, dob, qualification, specialist, email, mobNo, password)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                """;
         try {
             int i = jdbcTemplate.update(sql,
                     d.getFullName(),
@@ -74,7 +76,7 @@ public class DoctorRepository {
         String sql = "SELECT " + DOCTOR_COLS + " FROM Doctor WHERE id = ?";
         try {
             List<Doctor> list = jdbcTemplate.query(sql, DOCTOR_ROW_MAPPER, id);
-            return list.isEmpty() ? null : list.get(0);
+            return list.isEmpty() ? null : list.getFirst();
         } catch (Exception e) {
             log.error("Error fetching doctor by id {}: {}", id, e.getMessage(), e);
             return null;
@@ -82,7 +84,11 @@ public class DoctorRepository {
     }
 
     public boolean updateDoctor(Doctor d) {
-        String sql = "UPDATE Doctor SET fullName=?, dob=?, qualification=?, specialist=?, email=?, mobNo=?, password=? WHERE id=?";
+        String sql = """
+                UPDATE Doctor
+                SET fullName=?, dob=?, qualification=?, specialist=?, email=?, mobNo=?, password=?
+                WHERE id=?
+                """;
         try {
             int i = jdbcTemplate.update(sql,
                     d.getFullName(),
@@ -202,7 +208,11 @@ public class DoctorRepository {
     }
 
     public boolean editDoctorProfile(Doctor d) {
-        String sql = "UPDATE Doctor SET fullName=?, dob=?, qualification=?, specialist=?, email=?, mobNo=? WHERE id=?";
+        String sql = """
+                UPDATE Doctor
+                SET fullName=?, dob=?, qualification=?, specialist=?, email=?, mobNo=?
+                WHERE id=?
+                """;
         try {
             int i = jdbcTemplate.update(sql,
                     d.getFullName(),

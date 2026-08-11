@@ -1,0 +1,12 @@
+{
+  "name": "SonarQube Post-Task Check",
+  "version": "1.0.0",
+  "description": "After each migration task, verifies common quality issues are not introduced",
+  "when": {
+    "type": "postTaskExecution"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A migration task just completed. Quick quality check: (1) No hardcoded credentials in source, (2) Resources closed with try-with-resources (Java) or using/await using (.NET), (3) No System.out.println/e.printStackTrace (Java) or Console.WriteLine for errors (.NET), (4) No string literals duplicated >3 times, (5) Run build command to verify compilation. If issues found, fix immediately before proceeding."
+  }
+}

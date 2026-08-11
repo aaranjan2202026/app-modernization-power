@@ -1,0 +1,13 @@
+{
+  "name": "Git Safety Guard",
+  "version": "1.0.0",
+  "description": "Blocks branch/commit/push and destructive git operations during migration unless explicitly requested",
+  "when": {
+    "type": "preToolUse",
+    "toolTypes": ["shell"]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "If this command contains git commit, git push, git checkout, git switch, git branch, git reset --hard, git clean -f, or git rebase, it is BLOCKED unless the user explicitly asked for that git operation in their message. Migration changes stay on the current branch, uncommitted. Build, test, and read-only git commands (status, diff, log) proceed normally."
+  }
+}

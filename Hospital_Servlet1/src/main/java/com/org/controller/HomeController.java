@@ -7,13 +7,21 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.org.dao.DoctorDao;
-import com.org.dao.SpecialistDao;
+import com.org.dao.DoctorRepository;
+import com.org.dao.SpecialistRepository;
 import com.org.entity.Doctor;
 import com.org.entity.Specalist;
 
 @Controller
 public class HomeController {
+
+    private final DoctorRepository doctorRepository;
+    private final SpecialistRepository specialistRepository;
+
+    public HomeController(DoctorRepository doctorRepository, SpecialistRepository specialistRepository) {
+        this.doctorRepository = doctorRepository;
+        this.specialistRepository = specialistRepository;
+    }
 
     @GetMapping("/")
     public String home() {
@@ -47,12 +55,10 @@ public class HomeController {
 
     @GetMapping("/user_appointment.jsp")
     public String userAppointment(Model model) {
-        DoctorDao dao = new DoctorDao();
-        List<Doctor> list = dao.getAllDoctors();
+        List<Doctor> list = doctorRepository.getAllDoctors();
         model.addAttribute("doctorList", list);
 
-        SpecialistDao specDao = new SpecialistDao();
-        List<Specalist> specList = specDao.getAllSpecialist();
+        List<Specalist> specList = specialistRepository.getAllSpecialist();
         model.addAttribute("specList", specList);
 
         return "user_appointment";
@@ -76,16 +82,14 @@ public class HomeController {
 
     @GetMapping("/admin/doctor.jsp")
     public String adminDoctor(Model model) {
-        SpecialistDao dao = new SpecialistDao();
-        List<Specalist> list = dao.getAllSpecialist();
+        List<Specalist> list = specialistRepository.getAllSpecialist();
         model.addAttribute("specList", list);
         return "admin/doctor";
     }
 
     @GetMapping("/admin/view_doctor.jsp")
     public String adminViewDoctor(Model model) {
-        DoctorDao dao = new DoctorDao();
-        List<Doctor> list = dao.getAllDoctors();
+        List<Doctor> list = doctorRepository.getAllDoctors();
         model.addAttribute("doctorList", list);
         return "admin/view_doctor";
     }
