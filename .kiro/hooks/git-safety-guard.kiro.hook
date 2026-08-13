@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Git Safety Guard",
+  "description": "Blocks accidental git operations in Phases 1-6. Allows commit/push in Phase 7 (SonarQube requires pushed code) and Phase 8 (final audit push to GitHub).",
+  "version": "2",
+  "when": {
+    "type": "preToolUse",
+    "toolTypes": [
+      "shell"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "WORKSPACE POLICY CHECK: If this shell command contains git checkout, git branch -d, git reset --hard, git clean -f, or git rebase, it is BLOCKED unless the user explicitly requested that operation.\n\nHowever, git add, git commit, and git push ARE ALLOWED in Phase 7 and Phase 8 of the migration because:\n- Phase 7 requires code to be committed and pushed for SonarQube scanner to analyze it\n- Phase 8 requires final audit report commit and push to GitHub\n\nCheck Migration/.migration-state.json currentPhase. If currentPhase is 7, 8, or 'complete', allow git add/commit/push. Otherwise block them.\n\nBuild commands (mvn, dotnet, gradle), test commands, and read-only git commands (git status, git diff, git log) are ALWAYS safe to proceed."
+  }
+}

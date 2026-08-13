@@ -1,8 +1,18 @@
 ---
-inclusion: manual
+inclusion: auto
 ---
 
-# SonarQube MCP Integration
+# SonarQube MCP Integration (MANDATORY)
+
+## SonarQube is NOT Optional
+
+SonarQube scanning is a MANDATORY requirement for this migration workflow. At Phase 7, the agent MUST:
+1. **ASK the user** for their SonarQube Server URL and Authentication Token
+2. **Run the scanner** against the migrated code
+3. **Get a definitive pass/fail** — indeterminate/pending are NOT valid final states
+4. **Fix issues** if the gate fails (up to 3 attempts)
+
+Do NOT skip Phase 7. Do NOT mark it as pending. Do NOT use stale/cached results.
 
 ## When to Use
 
@@ -69,4 +79,5 @@ Resolution order if the expected key is missing:
 - Always discover projects first, never hardcode keys (use configured keys above as starting point)
 - Query multiple metrics together for efficiency
 - Document all findings in migration reports
-- If SonarQube is unreachable, document as "pending" and continue migration
+- SonarQube is MANDATORY — if unreachable after 3 retries, STOP and report the blocker to the user
+- Do NOT continue migration without a definitive SonarQube pass/fail result

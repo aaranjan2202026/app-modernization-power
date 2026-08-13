@@ -1,3 +1,7 @@
+---
+inclusion: auto
+---
+
 # .NET Migration Rules
 
 ## Phase 1 first: is there anything to migrate?

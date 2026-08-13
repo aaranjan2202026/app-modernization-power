@@ -93,7 +93,7 @@ All quality gates must pass before reporting completion:
 - **G1**: Assessment complete, issues cataloged
 - **G2**: Build compiles with 0 errors after migration
 - **G3**: All unit tests pass (0 failures)
-- **G4**: SonarQube quality gate passes (MANDATORY — must run scanner with user-provided URL+token)
+- **G4**: SonarQube quality gate passes (or documented as pending if unreachable)
 
 ---
 

@@ -1,3 +1,7 @@
+---
+inclusion: auto
+---
+
 # SonarQube Validation — Phase 7 Quality Gate (MANDATORY)
 
 ## IMPORTANT: SonarQube is NOT optional

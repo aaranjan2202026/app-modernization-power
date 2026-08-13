@@ -275,8 +275,10 @@ public record HospitalProperties(
 - [ ] Text blocks used for multi-line strings/SQL
 - [ ] Virtual threads enabled in config
 - [ ] Configuration externalized to YAML with profiles
-- [ ] SonarQube quality gate passes (or documented as pending)
+- [ ] SonarQube quality gate passes (MANDATORY — not skippable)
 - [ ] `Migration/Java21-Migration-Summary.md` generated
+- [ ] `Migration/FINAL-AUDIT-REPORT.md` generated (all phases documented)
+- [ ] Code pushed to GitHub
 
 ---
 
@@ -284,5 +286,5 @@ public record HospitalProperties(
 
 - Build fails → fix errors immediately, re-run, continue
 - Tests fail → determine if pre-existing or migration-caused, fix migration issues
-- SonarQube unreachable → skip Phase 7, document as "pending manual scan"
+- SonarQube unreachable → retry 3 times, then STOP and report as blocker to user (Phase 7 is MANDATORY)
 - Never stop for non-critical issues — document and continue

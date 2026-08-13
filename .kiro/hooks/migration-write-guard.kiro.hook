@@ -1,10 +1,13 @@
 {
+  "enabled": true,
   "name": "Migration Write Guard",
-  "version": "1.0.0",
   "description": "Single consolidated pre-write check covering migration scope and legacy namespace bans",
+  "version": "1",
   "when": {
     "type": "preToolUse",
-    "toolTypes": ["write"]
+    "toolTypes": [
+      "write"
+    ]
   },
   "then": {
     "type": "askAgent",

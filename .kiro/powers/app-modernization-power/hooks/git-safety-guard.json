@@ -1,13 +1,13 @@
 {
   "name": "Git Safety Guard",
-  "version": "1.0.0",
-  "description": "Blocks accidental git operations — all changes stay on current branch unless user explicitly requests otherwise",
+  "version": "2.0.0",
+  "description": "Blocks accidental git operations in Phases 1-6. Allows commit/push in Phase 7 (SonarQube scan requires pushed code) and Phase 8 (final audit push to GitHub).",
   "when": {
     "type": "preToolUse",
     "toolTypes": ["shell"]
   },
   "then": {
     "type": "askAgent",
-    "prompt": "WORKSPACE POLICY CHECK: If this shell command contains git checkout, git commit, git push, git branch -d, git reset, git rebase, or any branch-creating/switching/pushing/destructive operation, it is BLOCKED unless the user explicitly requested it in their original message. All migration changes must stay on the current local branch with no commits or pushes. Build commands (mvn, dotnet, gradle), test commands, and read-only git commands (git status, git diff, git log) are SAFE to proceed."
+    "prompt": "WORKSPACE POLICY CHECK: If this shell command contains git checkout, git branch -d, git reset, git rebase, or any destructive operation, it is BLOCKED unless the user explicitly requested it.\n\nHowever, git add, git commit, and git push ARE ALLOWED in Phase 7 and Phase 8 of the migration because:\n- Phase 7 requires code to be committed and pushed for SonarQube scanner to analyze it\n- Phase 8 requires final audit report commit and push to GitHub\n\nCheck Migration/.migration-state.json to verify current phase. If currentPhase is 7 or 8 (or 'complete'), allow git add/commit/push. Otherwise block them.\n\nBuild commands (mvn, dotnet, gradle), test commands, and read-only git commands (git status, git diff, git log) are ALWAYS safe to proceed."
   }
 }

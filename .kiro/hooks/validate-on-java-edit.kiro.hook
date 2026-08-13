@@ -1,10 +1,14 @@
 {
+  "enabled": true,
   "name": "Compile Check on Java Edit",
-  "version": "1.0.0",
   "description": "Runs Maven compilation check when Java files are saved to catch errors early during migration",
+  "version": "1",
   "when": {
     "type": "fileEdited",
-    "patterns": ["*.java", "pom.xml"]
+    "patterns": [
+      "*.java",
+      "pom.xml"
+    ]
   },
   "then": {
     "type": "runCommand",

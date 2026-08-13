@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Phase Gate Validation",
+  "description": "Enforces the phase gate and state-file update after a task completes",
+  "version": "2",
+  "when": {
+    "type": "postTaskExecution"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Phase gate check. Read Migration/.migration-state.json to determine current phase.\n\nFor Phases 2-6: Run the track build command (Java: mvn clean compile -f Hospital_Servlet1/pom.xml, .NET: dotnet build). If it fails, fix the errors and re-run before doing anything else. Once green, update the state file.\n\nFor Phase 7: Verify SonarQube scan was run with fresh credentials (URL + token prompted from user). Check that the quality gate has a definitive pass or fail result. Do NOT accept indeterminate or pending.\n\nFor Phase 8: Verify Migration/FINAL-AUDIT-REPORT.md exists and covers all phases. Verify code has been pushed to GitHub (git status shows clean working tree).\n\nOnce gate passes, update Migration/.migration-state.json — mark the current phase complete and the next phase in_progress. Continue immediately to the next phase without asking permission."
+  }
+}

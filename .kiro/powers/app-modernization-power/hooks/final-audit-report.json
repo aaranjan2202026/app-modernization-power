@@ -1,0 +1,12 @@
+{
+  "name": "Final Audit Report Generation",
+  "version": "1.0.0",
+  "description": "After Phase 7 completes, generates a comprehensive FINAL-AUDIT-REPORT.md covering all phases including SonarQube results, then commits and pushes to GitHub",
+  "when": {
+    "type": "postTaskExecution"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "CHECK: If Phase 7 (Quality Gate) just completed and Phase 8 is now in_progress, generate Migration/FINAL-AUDIT-REPORT.md with:\n\n1. EXECUTIVE SUMMARY - overall migration outcome\n2. PHASE-BY-PHASE AUDIT:\n   - Phase 1: Assessment findings\n   - Phase 2: Build config changes\n   - Phase 3: Legacy removal (files deleted, files modified)\n   - Phase 4: Language features applied\n   - Phase 5: Configuration changes\n   - Phase 6: Test results\n   - Phase 7: SonarQube scan results (gate status, metrics, issues)\n3. SONARQUBE RESULTS DETAIL - gate status, coverage, bugs, vulnerabilities, code smells\n4. FILES CHANGED - complete list of created/modified/deleted files\n5. QUALITY METRICS - before vs after comparison\n6. DEVIATIONS - any departures from the plan\n7. TIMESTAMP LOG - when each phase completed\n\nAfter generating the report:\n- git add -A\n- git commit -m 'migration: Final audit report with SonarQube results'\n- git push origin <current-branch>\n\nUpdate Migration/.migration-state.json Phase 8 to complete."
+  }
+}

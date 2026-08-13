@@ -1,0 +1,12 @@
+{
+  "name": "Audit Log Entry",
+  "version": "1.0.0",
+  "description": "After each migration task completes, appends an audit entry to Migration/AUDIT-LOG.md recording the event type, affected files, and gate result",
+  "when": {
+    "type": "postTaskExecution"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "AUDIT LOG ENTRY REQUIRED. Append one row to Migration/AUDIT-LOG.md (create it with the table header if it does not exist). Format: | <ISO 8601 UTC timestamp> | <phase number> | <EVENT_TYPE> | <one-line detail> | <gate: pass/fail/indeterminate/pending/n-a> | <affected files or dash> |. Event types: RUN_START, ASSESSMENT_COMPLETE, BUILD_CONFIG, FILE_DELETE, FILE_CREATE, FILE_MODIFY, DEPENDENCY_ADD, DEPENDENCY_REMOVE, VULN_REMEDIATE, GATE_CHECK, GATE_RETRY, LANGUAGE_FEATURES, HOSTING_MODERNIZE, CONFIG_EXTERNALIZE, TEST_CREATE, QUALITY_GATE, RUN_COMPLETE, RUN_STOPPED, ERROR. Never edit previous entries. Include file lists for destructive operations."
+  }
+}
