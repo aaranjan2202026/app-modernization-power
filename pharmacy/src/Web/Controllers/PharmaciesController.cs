@@ -161,6 +161,8 @@ namespace PharmacyNetwork.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConfirmTransfer(TransferViewModel transferViewModel)
         {
+            if (!ModelState.IsValid) return View("Transfer", transferViewModel);
+
             if (transferViewModel.TransferItemCount <= 0)
             {
                 ModelState.AddModelError(nameof(transferViewModel.TransferItemCount), "Quantity must be greater than zero.");

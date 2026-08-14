@@ -111,10 +111,14 @@ Only `pass` or `fail` (after 3 fix attempts) are valid final Phase 7 states. The
 The gate cannot judge uncommitted work. The agent MUST execute these steps — they are not optional:
 
 1. Commit and push the migration branch
-2. Run the scanner against it:
+2. Run the scanner using the **pre-configured sonar-maven-plugin** (v4.0.0.4121 in pom.xml):
+   ```powershell
+   $env:SONAR_PROJECT_KEY = "<project-key>"
+   $env:SONAR_HOST_URL = "<user-provided-URL>"
+   $env:SONAR_TOKEN = "<user-provided-token>"
+   cmd /c ".\.tools\apache-maven-3.9.9\bin\mvn.cmd sonar:sonar -f Hospital_Servlet1/pom.xml 2>NUL"
    ```
-   mvn sonar:sonar -Dsonar.projectKey=<key> -Dsonar.host.url=<sonarqube-server> -Dsonar.token=<token>
-   ```
+   The pom.xml properties `sonar.projectKey`, `sonar.host.url`, and `sonar.token` resolve from these env vars automatically. No `-D` flags needed.
 3. Wait for analysis to complete (check with `get_project_quality_gate_status`)
 4. Record the result in state file and audit log
 5. If gate fails: fix issues, re-scan, re-check (max 3 attempts)

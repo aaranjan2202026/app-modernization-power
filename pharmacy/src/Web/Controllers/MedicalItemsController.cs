@@ -33,6 +33,8 @@ namespace PharmacyNetwork.Web.Controllers
         // GET: MedicalItems
         public async Task<IActionResult> Index(MedicalItemsListViewModel medicalItemsViewModel, int? pageId)
         {
+            if (!ModelState.IsValid) return View(new MedicalItemsListViewModel());
+
             var medicalItems = await _mediator.Send(new GetMedicalItemsList(pageId ?? 0, medicalItemsViewModel.CategoryFilterApplied,
                 medicalItemsViewModel.FirmFilterApplied)); 
 

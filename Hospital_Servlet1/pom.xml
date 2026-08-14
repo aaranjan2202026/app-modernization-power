@@ -24,6 +24,9 @@
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <java.version>21</java.version>
+    <sonar.projectKey>${env.SONAR_PROJECT_KEY}</sonar.projectKey>
+    <sonar.host.url>${env.SONAR_HOST_URL}</sonar.host.url>
+    <sonar.token>${env.SONAR_TOKEN}</sonar.token>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -111,6 +114,11 @@
         <configuration>
           <release>${java.version}</release>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.sonarsource.scanner.maven</groupId>
+        <artifactId>sonar-maven-plugin</artifactId>
+        <version>4.0.0.4121</version>
       </plugin>
     </plugins>
   </build>

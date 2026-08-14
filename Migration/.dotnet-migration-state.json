@@ -1,0 +1,55 @@
+{
+  "track": "DOTNET",
+  "solution": "pharmacy/PharmacyNetwork.sln",
+  "sourceTarget": "net8.0 (already current - Framework->8 phases were no-ops)",
+  "targetFramework": "net8.0",
+  "started": "2026-08-11T00:00:00Z",
+  "toolchain": {
+    "sdk": "8.0.423",
+    "dotnet": ".tools/dotnet/dotnet.exe"
+  },
+  "baseline": {
+    "solutionBuild": "FAILED - MSB4025, sln referenced missing tests/UnitTests/UnitTests.csproj",
+    "projectBuild": "SUCCESS - 0 errors, 6 warnings",
+    "tests": "none - no test project existed",
+    "sourceFiles": 96
+  },
+  "final": {
+    "solutionBuild": "SUCCESS - 0 errors, 2 warnings",
+    "tests": "7 passed, 0 failed",
+    "vulnerabilities": "0 (AutoMapper NU1903 resolved by removing unused package)"
+  },
+  "legacyScanResult": {
+    "System.Web": 0,
+    "ConfigurationManager": 0,
+    "System.Data.Entity": 0,
+    "JavaScriptSerializer": 0,
+    "new HttpClient()": 0,
+    "note": "No .NET Framework legacy patterns. Already EF Core, async repos, DI, appsettings.json, Options pattern."
+  },
+  "currentPhase": "complete",
+  "phases": {
+    "1": {"name": "Assessment",            "status": "complete", "gate": "pass"},
+    "2": {"name": "Build Config",          "status": "complete", "gate": "pass",
+          "work": "Created missing tests/UnitTests project at the path the sln already referenced, fixing MSB4025"},
+    "3": {"name": "Hosting Modernization", "status": "complete", "gate": "pass",
+          "work": "Startup.cs consolidated into Program.cs minimal hosting; removed BuildServiceProvider anti-pattern"},
+    "4": {"name": "Language Features",     "status": "complete", "gate": "pass",
+          "work": "Cleared CS0618 obsolete UseDatabaseErrorPage and CS0168 unused exception; added real error logging"},
+    "5": {"name": "Configuration",         "status": "skipped",  "gate": "n/a",
+          "reason": "appsettings.json, environment overrides, and Options pattern already present"},
+    "6": {"name": "Testing",               "status": "complete", "gate": "pass",
+          "work": "Test project created from zero; 7 tests on specification filter and paging logic"},
+    "7": {"name": "Quality Gate",          "status": "complete", "gate": "pass_local",
+          "work": "AutoMapper 9.0.0 high-severity vulnerability removed. SonarQube scan not run against this branch."}
+  },
+  "deviations": [
+    "Target was already net8.0, not .NET Framework - the Framework->8 migration the request implied did not apply",
+    "AutoMapper fixed by REMOVAL not upgrade: the package was entirely unused (empty Profile, zero IMapper injections), so removing it eliminated the vulnerability with no API risk"
+  ],
+  "outstanding": [
+    "CS8981 x2: EF-generated migration class named 'sample'. Renaming risks breaking __EFMigrationsHistory - left deliberately.",
+    "Test coverage is 7 tests on ApplicationCore specifications only. Controllers, handlers, and repositories are untested.",
+    "Swashbuckle 5.4.0 and MediatR 8.0.1 are old but carry no advisory."
+  ]
+}

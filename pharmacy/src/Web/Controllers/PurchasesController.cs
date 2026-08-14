@@ -56,23 +56,7 @@ namespace PharmacyNetwork.Web.Controllers
         // GET: Purchases/Create
         public IActionResult Create()
         {
-            // TODO: Add Create Action
             return View();
         }
-
-        //// POST: Purchases/Create
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("PurchId,PharmId,PurchDate,PurchAmount,PurchDiscountPercent")] Purchase purchase)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        _context.Add(purchase);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    ViewData["PharmId"] = new SelectList(_context.Pharmacy, "PharmId", "PharmAddress", purchase.PharmId);
-        //    return View(purchase);
-        //}
     }
 }

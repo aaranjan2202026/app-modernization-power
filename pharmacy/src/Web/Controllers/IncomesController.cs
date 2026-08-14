@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using PharmacyNetwork.ApplicationCore.Constants;
 using PharmacyNetwork.ApplicationCore.Entities;
 using PharmacyNetwork.ApplicationCore.Interfaces;
@@ -26,16 +27,19 @@ namespace PharmacyNetwork.Web.Controllers
         private readonly IAsyncRepository<IncomeDetail> _incomeDetailRepository;
         private readonly IAsyncRepository<MedicalItem> _medicalItemRepository;
         private readonly IMediator _mediator;
+        private readonly ILogger<IncomesController> _logger;
 
         public IncomesController(IAsyncRepository<Income> repository, 
             IAsyncRepository<IncomeDetail> incomeDetailRepository,
             IAsyncRepository<MedicalItem> medicalItemRepository,
-            IMediator mediator)
+            IMediator mediator,
+            ILogger<IncomesController> logger)
         {
             _repository = repository;
             _incomeDetailRepository = incomeDetailRepository;
             _medicalItemRepository = medicalItemRepository;
             _mediator = mediator;
+            _logger = logger;
         }
 
         // GET: Incomes
@@ -117,7 +121,6 @@ namespace PharmacyNetwork.Web.Controllers
 
                 if (incomeItems == null || !incomeItems.Any())
                 {
-                    // TempData["ErrorMessage"] = "No items in income list.";
                     return RedirectToAction(nameof(Create));
                 }
 
@@ -152,13 +155,13 @@ namespace PharmacyNetwork.Web.Controllers
                 // Clear the session after successful creation
                 ClearIncome();
 
-                // TempData["SuccessMessage"] = "Income created successfully.";
                 return RedirectToAction("Details", "Incomes", new { id = createdIncome.IncomeId });
             }
             catch (Exception ex)
             {
-                // Log the exception if you have logging configured
-                // TempData["ErrorMessage"] = "An error occurred while creating the income.";
+                // Previously swallowed silently, which hid the cause of failed
+                // income creation from operators entirely.
+                _logger.LogError(ex, "Failed to create income; redirecting back to Create.");
                 return RedirectToAction(nameof(Create));
             }
         }

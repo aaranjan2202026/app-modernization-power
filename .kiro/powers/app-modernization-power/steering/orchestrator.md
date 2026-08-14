@@ -75,6 +75,8 @@ AFTER phase 8:
 | Phase | Gate condition | Output document |
 |---|---|---|
 | 1 | Assessment report written | `Migration/00-Assessment-Report.md` + `Orchestration/SONARQUBE-FIX-SUMMARY.md` |
+
+Reference template for SonarQube Fix Summary: #[[file:steering/sonarqube-fix-summary-template.md]]
 | 2 | `BUILD_CMD` compiles, 0 errors | `Migration/01-Migration_Plan.md` (task list generated) |
 | 3 | `BUILD_CMD` compiles, 0 errors | — |
 | 4 | `BUILD_CMD` compiles, 0 errors | — |
@@ -97,6 +99,8 @@ Format: `| <ISO timestamp> | <phase> | <EVENT_TYPE> | <detail> | <gate> | <files
 
 See `steering/audit-log.md` for the full event type catalog.
 
+Reference template: #[[file:steering/audit-log-template.md]]
+
 ### Migration Plan — Generated at Phase 2
 
 After Phase 1 assessment, generate `Migration/01-Migration_Plan.md` with:
@@ -109,6 +113,8 @@ Use these categories only: Config Externalization, Modularization, Deprecated AP
 
 Mark each task as Completed when done during Phases 3-5.
 
+Reference template: #[[file:steering/migration-plan-template.md]]
+
 ### Validation Report — Generated at Phase 6
 
 After all tests pass, generate `Validation/VALIDATION-REPORT.md` with:
@@ -120,14 +126,21 @@ After all tests pass, generate `Validation/VALIDATION-REPORT.md` with:
 - File inventory (new, modified, deleted)
 - Gate G4: APPROVED or BLOCKED
 
-### Phase 7 — SonarQube (MANDATORY)
+Reference template: #[[file:steering/validation-report-template.md]]
 
-SonarQube is NOT optional. The agent MUST:
+### Phase 7 — SonarQube (MANDATORY — AUTOMATIC)
+
+SonarQube is NOT optional. The sonar-maven-plugin is pre-configured in pom.xml. The agent MUST:
 1. **ASK the user** for SonarQube server URL and authentication token
 2. **Commit and push** the migration code (scanner needs pushed code)
-3. **Run the scanner**: `mvn sonar:sonar -Dsonar.projectKey=<key> -Dsonar.host.url=<URL> -Dsonar.token=<TOKEN>`
+3. **Run the scanner automatically**:
+   ```
+   mvn sonar:sonar -Dsonar.projectKey=<key> -Dsonar.host.url=<URL> -Dsonar.token=<TOKEN> -f Hospital_Servlet1/pom.xml
+   ```
+   The sonar-maven-plugin (v4.0.0.4121) is already in pom.xml — no additional setup needed.
 4. **Query the gate** via MCP tools: `get_project_quality_gate_status`
 5. **Record pass or fail** — indeterminate/pending are NOT valid final states
+6. If gate fails: fix issues, re-run scanner (max 3 attempts)
 
 ### Phase 8 — Audit Report & GitHub Push
 

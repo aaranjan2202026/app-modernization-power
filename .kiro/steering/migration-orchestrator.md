@@ -120,14 +120,19 @@ After all tests pass, generate `Validation/VALIDATION-REPORT.md` with:
 - File inventory (new, modified, deleted)
 - Gate G4: APPROVED or BLOCKED
 
-### Phase 7 — SonarQube (MANDATORY)
+### Phase 7 — SonarQube (MANDATORY — AUTOMATIC)
 
-SonarQube is NOT optional. The agent MUST:
+SonarQube is NOT optional. The sonar-maven-plugin (v4.0.0.4121) is pre-configured in pom.xml. The agent MUST:
 1. **ASK the user** for SonarQube server URL and authentication token
 2. **Commit and push** the migration code (scanner needs pushed code)
-3. **Run the scanner**: `mvn sonar:sonar -Dsonar.projectKey=<key> -Dsonar.host.url=<URL> -Dsonar.token=<TOKEN>`
+3. **Run the scanner automatically**:
+   ```
+   mvn sonar:sonar -Dsonar.projectKey=<key> -Dsonar.host.url=<URL> -Dsonar.token=<TOKEN> -f Hospital_Servlet1/pom.xml
+   ```
+   No additional plugin installation needed — it's already in the build.
 4. **Query the gate** via MCP tools: `get_project_quality_gate_status`
 5. **Record pass or fail** — indeterminate/pending are NOT valid final states
+6. If gate fails: fix issues, re-run scanner (max 3 attempts)
 
 ### Phase 8 — Audit Report & GitHub Push
 
